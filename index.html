@@ -4,33 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Operativo | Control de Residencia Civiles</title>
-    <!-- Firebase SDKs Compat (Auth + Realtime Database) -->
+    <!-- Firebase SDKs Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    
-    <!-- Chart.js para Dashboard -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        :root {
-            --primary: #0f172a;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --bg-gray: #f8fafc;
-        }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #f1f5f9; 
-            margin: 0; 
-            padding: 10px;
-            color: #1e293b;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        :root { --primary: #0f172a; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #3b82f6; --bg-gray: #f8fafc; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 10px; color: #1e293b; -webkit-tap-highlight-color: transparent; }
+        
         /* Login */
         #login-screen { max-width: 100%; margin: 40px auto; background: white; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; border-top: 6px solid var(--primary); }
         #login-screen input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -49,6 +33,13 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* Panel Admin Asignación */
+        .admin-assign-panel { background: #e0f2fe; border: 1px solid #7dd3fc; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: none; }
+        .admin-assign-panel h3 { margin: 0 0 10px 0; color: #0369a1; font-size: 1.1em; }
+        .assign-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .assign-controls select, .assign-controls input { padding: 10px; border-radius: 6px; border: 1px solid #bae6fd; font-size: 14px; flex: 1; min-width: 150px; }
+        .assign-controls button { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
         .dashboard { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 1024px) { .dashboard { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); } }
         
@@ -56,6 +47,9 @@
         .tech-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 12px; }
         .tech-name { font-size: 1.1em; font-weight: bold; margin: 0; }
         .tech-project { background: #e2e8f0; color: #475569; padding: 3px 8px; border-radius: 10px; font-size: 0.75em; font-weight: bold; }
+        
+        .inbox-container { display: none; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; margin-bottom: 12px; }
+        .inbox-item { background: white; padding: 8px; border-radius: 6px; border: 1px solid #bbf7d0; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
         
         .status-display { padding: 12px; border-radius: 8px; text-align: center; font-size: 1.05em; font-weight: bold; background-color: #f1f5f9; color: #64748b; margin-bottom: 12px; }
         .timer { font-size: 1.6em; font-family: monospace; display: block; margin-top: 4px; color: #0f172a; }
@@ -89,11 +83,6 @@
         @media (min-width: 768px) { .live-grid { grid-template-columns: repeat(3, 1fr); } }
         .live-card { padding: 12px; border-radius: 8px; background: var(--bg-gray); border-left: 5px solid #cbd5e1; font-size: 14px; }
         .live-card.active-state { border-left-color: var(--info); background: #eff6ff; }
-
-        .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
-        @media (min-width: 768px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
-        .chart-container { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); height: 280px; position: relative; }
-        .chart-full { grid-column: 1 / -1; }
         
         .log-section { margin-top: 15px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; }
@@ -124,6 +113,27 @@
 
         <div id="tab-control" class="tab-content active">
             
+            <!-- PANEL DE ASIGNACIÓN (ADMIN) -->
+            <div class="admin-assign-panel" id="admin-assign-panel">
+                <h3>🎯 Asignador de Requerimientos a Técnicos</h3>
+                <div class="assign-controls">
+                    <select id="assign_tech">
+                        <option value="t1">Bastián Valdovinos (PJUD 4)</option>
+                        <option value="t2">Bastián Cárdenas (PJUD 5)</option>
+                        <option value="t3">Vicente Culiaciati (PJUD 5)</option>
+                    </select>
+                    <input type="text" id="assign_tkt_id" placeholder="Nº Ticket Mauweb">
+                    <select id="assign_urgency">
+                        <option value="Baja">Baja</option>
+                        <option value="Media" selected>Media</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Crítica">Crítica</option>
+                    </select>
+                    <button onclick="asignarTicketDesdeAdmin()">Enviar Requerimiento</button>
+                </div>
+            </div>
+
+            <!-- MONITOREO EN VIVO (ADMIN) -->
             <div class="live-monitor-section" id="live-monitor-panel" style="display: none;">
                 <strong>👁️ Monitoreo de Estado en Vivo Sincronizado (Panel ADM)</strong>
                 <div class="live-grid" id="live-grid-content"></div>
@@ -141,6 +151,9 @@
                 <!-- Tarjeta t1 -->
                 <div class="tech-card" id="card_t1">
                     <div class="tech-header"><h3 class="tech-name">Bastián Valdovinos</h3><span class="tech-project">PJUD 4</span></div>
+                    
+                    <div id="bandeja_asignados_t1" class="inbox-container"></div>
+
                     <div class="status-display" id="status_t1"><span>Inactivo</span><span class="timer" id="timer_t1">00:00:00</span></div>
                     <div class="action-grid" id="actions_t1">
                         <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="cambiarEstado('t1', 'En dependencia CAPJ', '#d49a1e')">🏢 En CAPJ</button>
@@ -150,31 +163,19 @@
                         <button id="btn_atn_t1" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="cambiarEstado('t1', 'Atención Presencial', '#3b82f6')" disabled>🛠️ Atención</button>
                         <button class="btn-state c-colacion" data-estado="Colación" onclick="cambiarEstado('t1', 'Colación', '#858c94')">🍔 Colación</button>
                     </div>
-                    
                     <div class="input-group" id="grp_traslado_t1" style="display:none;">
                         <label>🚗 Tipo de Traslado:</label>
-                        <select id="tipo_traslado_t1" onchange="guardarDatosEnNube('t1')">
-                            <option value="A pie">A pie</option>
-                            <option value="Transporte Público">Transporte Público</option>
-                            <option value="Vehículo">Vehículo Corporativo / Particular</option>
-                        </select>
+                        <select id="tipo_traslado_t1" onchange="guardarDatosEnNube('t1')"><option value="A pie">A pie</option><option value="Transporte Público">Transporte Público</option><option value="Vehículo">Vehículo Corporativo / Particular</option></select>
                     </div>
-
                     <div class="input-group" id="grp_tickets_t1">
                         <label>🎫 Gestión de Tickets Simultáneos:</label>
                         <div style="display: flex; gap: 5px; margin-bottom: 10px;">
                             <input type="text" id="new_tkt_id_t1" placeholder="Nº Ticket Mauweb" style="flex:1;">
-                            <select id="new_tkt_urg_t1" style="width:110px;">
-                                <option value="Baja">Baja</option>
-                                <option value="Media" selected>Media</option>
-                                <option value="Alta">Alta</option>
-                                <option value="Crítica">Crítica</option>
-                            </select>
-                            <button type="button" class="btn-add-ticket" onclick="agregarTicket('t1')" style="width: auto; margin: 0; padding: 0 15px;">+</button>
+                            <select id="new_tkt_urg_t1" style="width:110px;"><option value="Baja">Baja</option><option value="Media" selected>Media</option><option value="Alta">Alta</option><option value="Crítica">Crítica</option></select>
+                            <button type="button" class="btn-add-ticket" onclick="agregarTicketManual('t1')" style="width: auto; margin: 0; padding: 0 15px;">+</button>
                         </div>
                         <div class="ticket-list-container" id="tkt_list_t1"></div>
                     </div>
-
                     <div class="input-group"><label>📝 Observaciones / Retrasos:</label><input type="text" id="obs_t1" placeholder="Detalles de retrasos" onchange="guardarDatosEnNube('t1')"></div>
                     <button class="btn-finalizar" onclick="finalizarRegistro('t1')">⏹️ Guardar y Cerrar Actividad Actual</button>
                 </div>
@@ -182,6 +183,9 @@
                 <!-- Tarjeta t2 -->
                 <div class="tech-card" id="card_t2">
                     <div class="tech-header"><h3 class="tech-name">Bastián Cárdenas</h3><span class="tech-project">PJUD 5</span></div>
+                    
+                    <div id="bandeja_asignados_t2" class="inbox-container"></div>
+
                     <div class="status-display" id="status_t2"><span>Inactivo</span><span class="timer" id="timer_t2">00:00:00</span></div>
                     <div class="action-grid" id="actions_t2">
                         <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="cambiarEstado('t2', 'En dependencia CAPJ', '#d49a1e')">🏢 En CAPJ</button>
@@ -193,23 +197,14 @@
                     </div>
                     <div class="input-group" id="grp_traslado_t2" style="display:none;">
                         <label>🚗 Tipo de Traslado:</label>
-                        <select id="tipo_traslado_t2" onchange="guardarDatosEnNube('t2')">
-                            <option value="A pie">A pie</option>
-                            <option value="Transporte Público">Transporte Público</option>
-                            <option value="Vehículo">Vehículo Corporativo / Particular</option>
-                        </select>
+                        <select id="tipo_traslado_t2" onchange="guardarDatosEnNube('t2')"><option value="A pie">A pie</option><option value="Transporte Público">Transporte Público</option><option value="Vehículo">Vehículo</option></select>
                     </div>
                     <div class="input-group" id="grp_tickets_t2">
                         <label>🎫 Gestión de Tickets Simultáneos:</label>
                         <div style="display: flex; gap: 5px; margin-bottom: 10px;">
                             <input type="text" id="new_tkt_id_t2" placeholder="Nº Ticket Mauweb" style="flex:1;">
-                            <select id="new_tkt_urg_t2" style="width:110px;">
-                                <option value="Baja">Baja</option>
-                                <option value="Media" selected>Media</option>
-                                <option value="Alta">Alta</option>
-                                <option value="Crítica">Crítica</option>
-                            </select>
-                            <button type="button" class="btn-add-ticket" onclick="agregarTicket('t2')" style="width: auto; margin: 0; padding: 0 15px;">+</button>
+                            <select id="new_tkt_urg_t2" style="width:110px;"><option value="Baja">Baja</option><option value="Media" selected>Media</option><option value="Alta">Alta</option><option value="Crítica">Crítica</option></select>
+                            <button type="button" class="btn-add-ticket" onclick="agregarTicketManual('t2')" style="width: auto; margin: 0; padding: 0 15px;">+</button>
                         </div>
                         <div class="ticket-list-container" id="tkt_list_t2"></div>
                     </div>
@@ -220,6 +215,9 @@
                 <!-- Tarjeta t3 -->
                 <div class="tech-card" id="card_t3">
                     <div class="tech-header"><h3 class="tech-name">Vicente Culiaciati</h3><span class="tech-project">PJUD 5</span></div>
+                    
+                    <div id="bandeja_asignados_t3" class="inbox-container"></div>
+
                     <div class="status-display" id="status_t3"><span>Inactivo</span><span class="timer" id="timer_t3">00:00:00</span></div>
                     <div class="action-grid" id="actions_t3">
                         <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="cambiarEstado('t3', 'En dependencia CAPJ', '#d49a1e')">🏢 En CAPJ</button>
@@ -231,23 +229,14 @@
                     </div>
                     <div class="input-group" id="grp_traslado_t3" style="display:none;">
                         <label>🚗 Tipo de Traslado:</label>
-                        <select id="tipo_traslado_t3" onchange="guardarDatosEnNube('t3')">
-                            <option value="A pie">A pie</option>
-                            <option value="Transporte Público">Transporte Público</option>
-                            <option value="Vehículo">Vehículo Corporativo / Particular</option>
-                        </select>
+                        <select id="tipo_traslado_t3" onchange="guardarDatosEnNube('t3')"><option value="A pie">A pie</option><option value="Transporte Público">Transporte Público</option><option value="Vehículo">Vehículo</option></select>
                     </div>
                     <div class="input-group" id="grp_tickets_t3">
                         <label>🎫 Gestión de Tickets Simultáneos:</label>
                         <div style="display: flex; gap: 5px; margin-bottom: 10px;">
                             <input type="text" id="new_tkt_id_t3" placeholder="Nº Ticket Mauweb" style="flex:1;">
-                            <select id="new_tkt_urg_t3" style="width:110px;">
-                                <option value="Baja">Baja</option>
-                                <option value="Media" selected>Media</option>
-                                <option value="Alta">Alta</option>
-                                <option value="Crítica">Crítica</option>
-                            </select>
-                            <button type="button" class="btn-add-ticket" onclick="agregarTicket('t3')" style="width: auto; margin: 0; padding: 0 15px;">+</button>
+                            <select id="new_tkt_urg_t3" style="width:110px;"><option value="Baja">Baja</option><option value="Media" selected>Media</option><option value="Alta">Alta</option><option value="Crítica">Crítica</option></select>
+                            <button type="button" class="btn-add-ticket" onclick="agregarTicketManual('t3')" style="width: auto; margin: 0; padding: 0 15px;">+</button>
                         </div>
                         <div class="ticket-list-container" id="tkt_list_t3"></div>
                     </div>
@@ -258,16 +247,16 @@
         </div>
 
         <div id="tab-metrics" class="tab-content">
-            <!-- Esta sección es exclusiva de supervisor. Conserva la misma lógica de los gráficos -->
-            <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 15px;">
-                <h3>📊 Las métricas acumuladas están corriendo...</h3>
-                <p>La lógica analítica de los reportes se procesa en el Sheet de Google.</p>
+            <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 15px; text-align: center;">
+                <h3 style="color: #0f172a;">📊 El sistema de Analítica y Gráficos está corriendo</h3>
+                <p>Todo el registro se envía automáticamente y en vivo a Google Sheets.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // === 1. CONFIGURACIÓN FIREBASE (AUTH + DATABASE) ===
+        // === 1. CONFIGURACIÓN FIREBASE Y ACCESOS ===
+        // ¡REEMPLAZA AQUÍ TUS CREDENCIALES SI AÚN NO LO HAS HECHO!
         const firebaseConfig = {
             apiKey: "AIzaSyCHimgA1iVDisy3SGOgnlpOrSAjMxz3G1Q",
             authDomain: "auth-civiles.firebaseapp.com",
@@ -275,12 +264,12 @@
             storageBucket: "auth-civiles.firebasestorage.app",
             messagingSenderId: "954664785497",
             appId: "1:954664785497:web:6171575021bd8157ff4348",
-            databaseURL: "https://auth-civiles-default-rtdb.firebaseio.com" // Asegúrate de que esta URL sea correcta según tu consola.
+            databaseURL: "https://auth-civiles-default-rtdb.firebaseio.com"
         };
         
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const database = firebase.database(); // Inicializamos la Nube en Tiempo Real
+        const database = firebase.database();
 
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxY1lONPvtreHt9urefvuFqfHglfkTBgIQzN18oRzOoM9wRYYytzPZyDHChD98vZklU4A/exec";
 
@@ -291,7 +280,6 @@
             "vculiaciati@fcom.cl": "t3"
         };
 
-        // Estado local temporal. La fuente de verdad será Firebase.
         let activeStates = {}; 
         let currentRole = "";
 
@@ -305,10 +293,9 @@
                     document.getElementById('app-content').style.display = 'block';
                     document.getElementById('user-display').innerText = mail;
                     prepararVistas();
-                    iniciarSincronizacionNube(); // <-- Aquí conectamos los dispositivos
+                    iniciarSincronizacionNube();
                 } else {
-                    alert("Cuenta sin rol asignado.");
-                    auth.signOut();
+                    alert("Cuenta sin rol asignado."); auth.signOut();
                 }
             } else {
                 document.getElementById('login-screen').style.display = 'block';
@@ -328,6 +315,7 @@
             if (currentRole === "admin") {
                 document.getElementById('tabs-nav').style.display = 'flex';
                 document.getElementById('live-monitor-panel').style.display = 'block';
+                document.getElementById('admin-assign-panel').style.display = 'block';
                 estructuraTecnicos.forEach(t => document.getElementById(`card_${t.id}`).style.display = 'flex');
             } else {
                 document.getElementById(`card_${currentRole}`).style.display = 'flex';
@@ -342,14 +330,13 @@
             document.getElementById(`btn-${pid}`).classList.add('active');
         }
 
-        // === 3. MAGIA DE SINCRONIZACIÓN EN TIEMPO REAL (FIREBASE DB) ===
+        // === 3. SINCRONIZACIÓN EN TIEMPO REAL (FIREBASE DB) ===
         function iniciarSincronizacionNube() {
-            // Escuchamos cualquier cambio en la base de datos "activeStates"
+            // Escuchar Tareas Activas
             database.ref('activeStates').on('value', (snapshot) => {
                 const datosNube = snapshot.val() || {};
-                activeStates = datosNube; // Actualizamos la memoria local
+                activeStates = datosNube;
                 
-                // Actualizar las tarjetas visuales sin borrar lo que el técnico está escribiendo
                 if (currentRole === "admin") {
                     estructuraTecnicos.forEach(t => refrescarTarjeta(t.id, datosNube[t.id]));
                     actualizarMonitorAdmin(datosNube);
@@ -357,11 +344,20 @@
                     refrescarTarjeta(currentRole, datosNube[currentRole]);
                 }
             });
+
+            // Escuchar Bandeja de Tickets Asignados
+            database.ref('assignedTickets').on('value', (snapshot) => {
+                const assignedData = snapshot.val() || {};
+                if (currentRole === "admin") {
+                    estructuraTecnicos.forEach(t => renderizarBandejaAsignados(t.id, assignedData[t.id]));
+                } else {
+                    renderizarBandejaAsignados(currentRole, assignedData[currentRole]);
+                }
+            });
         }
 
         function refrescarTarjeta(tid, data) {
             if (data && data.estado) {
-                // Actualizar colores y botones
                 const sBox = document.getElementById(`status_${tid}`);
                 sBox.style.backgroundColor = data.color;
                 sBox.style.color = (data.color === '#f28b2a') ? '#0f172a' : 'white';
@@ -377,10 +373,8 @@
                     }
                 });
 
-                // Mostrar/Ocultar traslado
                 document.getElementById(`grp_traslado_${tid}`).style.display = data.estado.includes('Traslado') ? 'block' : 'none';
                 
-                // Mostrar/Ocultar Tickets
                 const tktArea = document.getElementById(`grp_tickets_${tid}`);
                 if (['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(data.estado)) {
                     tktArea.style.pointerEvents = 'none'; tktArea.style.opacity = '0.5';
@@ -390,14 +384,13 @@
 
                 document.getElementById(`btn_atn_${tid}`).disabled = !(data.estado === 'Traslado a Juzgados' || data.estado === 'Traslado a Lab' || data.estado === 'Atención Presencial');
 
-                // Solo actualizar campos de texto si es el ADMIN mirando (para no borrarle la escritura al técnico)
+                // Ojo: Solo sobreescribir inputs de texto si el ADM está mirando
                 if (currentRole === "admin") {
                     if(data.tipoTraslado) document.getElementById(`tipo_traslado_${tid}`).value = data.tipoTraslado;
                     if(data.obsInput) document.getElementById(`obs_${tid}`).value = data.obsInput;
                 }
                 
                 pintarTicketsDOM(tid, data.tickets);
-
             } else {
                 limpiarTarjetaVisual(tid);
             }
@@ -415,26 +408,81 @@
             document.getElementById(`tkt_list_${tid}`).innerHTML = "";
         }
 
-        // === 4. OPERACIONES DEL TÉCNICO (ENVIAR A LA NUBE) ===
+        // === 4. ASIGNACIÓN DE REQUERIMIENTOS (COORDINADOR -> TÉCNICO) ===
+        function asignarTicketDesdeAdmin() {
+            const tid = document.getElementById('assign_tech').value;
+            const tkt = document.getElementById('assign_tkt_id').value.trim();
+            const urg = document.getElementById('assign_urgency').value;
+            
+            if(!tkt) return alert("❌ Debe ingresar el número de ticket.");
+
+            const nuevaAsignacion = { id: tkt, urgencia: urg, timestamp: Date.now() };
+            database.ref('assignedTickets/' + tid).push(nuevaAsignacion);
+            
+            document.getElementById('assign_tkt_id').value = "";
+            alert("✅ Requerimiento despachado a la bandeja del técnico exitosamente.");
+        }
+
+        function renderizarBandejaAsignados(tid, data) {
+            const container = document.getElementById(`bandeja_asignados_${tid}`);
+            if(!container) return;
+
+            if (!data) {
+                container.style.display = "none";
+                container.innerHTML = "";
+                return;
+            }
+
+            container.style.display = "block";
+            container.innerHTML = `<strong style="color:#166534;">📥 Requerimientos Asignados:</strong><div id="list_asignados_${tid}"></div>`;
+            
+            const list = document.getElementById(`list_asignados_${tid}`);
+            Object.entries(data).forEach(([key, t]) => {
+                const div = document.createElement('div');
+                div.className = "inbox-item";
+                const btnDisplay = (currentRole === 'admin') ? "none" : "block"; // ADM no puede tomar los tickets del técnico
+
+                div.innerHTML = `
+                    <span><b>${t.id}</b> <span style="color:gray;">(${t.urgencia})</span></span>
+                    <button onclick="tomarTicketAsignado('${tid}', '${key}', '${t.id}', '${t.urgencia}')" style="display:${btnDisplay}; background:#16a34a; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">➕ Tomar</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function tomarTicketAsignado(tid, fbKey, tktId, urgencia) {
+            if (!activeStates[tid] || !activeStates[tid].estado) {
+                alert("⚠️ Para 'Tomar' este ticket a tu gestión, primero debes iniciar una actividad (Ej: presiona 'Traslado a Juzgados' o 'Atención').");
+                return;
+            }
+
+            // Traducir de Firebase para asegurar que sea un Array
+            let tktsArray = activeStates[tid].tickets ? (Array.isArray(activeStates[tid].tickets) ? activeStates[tid].tickets : Object.values(activeStates[tid].tickets)) : [];
+            
+            tktsArray.push({ id: tktId, urgencia: urgencia, cierreOT: "", sinOT: false });
+            activeStates[tid].tickets = tktsArray;
+            
+            database.ref('activeStates/' + tid).set(activeStates[tid]);
+            database.ref('assignedTickets/' + tid + '/' + fbKey).remove(); // Lo quita de la bandeja
+        }
+
+        // === 5. OPERACIONES DEL TÉCNICO (ENVIAR A LA NUBE) ===
         function cambiarEstado(tid, nuevoEstado, color) {
             if (activeStates[tid] && activeStates[tid].estado) {
-                // Si el técnico cambia de botón sin finalizar, cerramos automáticamente la anterior
                 if(!validarReglas(tid, nuevoEstado)) return;
                 enviarRegistroASheets(tid);
             }
 
-            const ahora = Date.now();
             const newState = {
                 estado: nuevoEstado,
                 color: color,
-                startTimeMs: ahora,
+                startTimeMs: Date.now(),
                 horaInicioStr: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                 tipoTraslado: document.getElementById(`tipo_traslado_${tid}`).value,
                 obsInput: document.getElementById(`obs_${tid}`).value,
-                tickets: (activeStates[tid] && activeStates[tid].tickets) ? activeStates[tid].tickets : []
+                tickets: activeStates[tid] && activeStates[tid].tickets ? Object.values(activeStates[tid].tickets) : []
             };
 
-            // Enviar a Firebase (Esto actualiza a todos los dispositivos instantáneamente)
             database.ref('activeStates/' + tid).set(newState);
         }
 
@@ -446,26 +494,32 @@
             }
         }
 
-        function agregarTicket(tid) {
+        function agregarTicketManual(tid) {
             const tktId = document.getElementById(`new_tkt_id_${tid}`).value.trim();
             const urgencia = document.getElementById(`new_tkt_urg_${tid}`).value;
             if (tktId === "" || !activeStates[tid]) return;
 
-            if (!activeStates[tid].tickets) activeStates[tid].tickets = [];
-            activeStates[tid].tickets.push({ id: tktId, urgencia: urgencia, cierreOT: "", sinOT: false });
+            let tktsArray = activeStates[tid].tickets ? (Array.isArray(activeStates[tid].tickets) ? activeStates[tid].tickets : Object.values(activeStates[tid].tickets)) : [];
+            tktsArray.push({ id: tktId, urgencia: urgencia, cierreOT: "", sinOT: false });
+            activeStates[tid].tickets = tktsArray;
             
             document.getElementById(`new_tkt_id_${tid}`).value = "";
             database.ref('activeStates/' + tid).set(activeStates[tid]);
         }
 
         function modificarTicket(tid, idx, accion, valor) {
-            if (activeStates[tid] && activeStates[tid].tickets[idx]) {
-                if (accion === 'borrar') activeStates[tid].tickets.splice(idx, 1);
-                if (accion === 'cierre') activeStates[tid].tickets[idx].cierreOT = valor;
+            if (activeStates[tid] && activeStates[tid].tickets) {
+                // Traducción estricta de array para Firebase
+                let tktsArray = Array.isArray(activeStates[tid].tickets) ? activeStates[tid].tickets : Object.values(activeStates[tid].tickets);
+                
+                if (accion === 'borrar') tktsArray.splice(idx, 1);
+                if (accion === 'cierre') tktsArray[idx].cierreOT = valor;
                 if (accion === 'sinOT') {
-                    activeStates[tid].tickets[idx].sinOT = valor;
-                    if(valor) activeStates[tid].tickets[idx].cierreOT = "";
+                    tktsArray[idx].sinOT = valor;
+                    if(valor) tktsArray[idx].cierreOT = "";
                 }
+                
+                activeStates[tid].tickets = tktsArray;
                 database.ref('activeStates/' + tid).set(activeStates[tid]);
             }
         }
@@ -475,12 +529,13 @@
             container.innerHTML = "";
             if (!tickets) return;
 
-            tickets.forEach((t, idx) => {
+            // Traducción estricta Anti-Crash
+            let tktsArray = Array.isArray(tickets) ? tickets : Object.values(tickets);
+
+            tktsArray.forEach((t, idx) => {
                 const item = document.createElement('div');
                 item.className = `ticket-item ${t.urgencia.toLowerCase()}`;
-                
-                // Si el ADMIN está mirando, deshabilitamos la edición directa de los tickets para que no interfiera
-                const disableAttr = (currentRole === "admin") ? 'disabled' : '';
+                const disableAttr = (currentRole === "admin") ? 'disabled' : ''; // Admin no puede tipear horas a nombre del técnico
 
                 item.innerHTML = `
                     <button class="remove-tkt-btn" onclick="modificarTicket('${tid}', ${idx}, 'borrar')" ${disableAttr}>X</button>
@@ -494,16 +549,20 @@
             });
         }
 
-        // === 5. VALIDACIÓN Y CIERRE (GOOGLE SHEETS) ===
+        // === 6. VALIDACIÓN Y CIERRE (GOOGLE SHEETS) ===
         function validarReglas(tid, nuevoEstado) {
             const estadoActual = activeStates[tid].estado;
-            const tkts = activeStates[tid].tickets || [];
+            let tktsArray = activeStates[tid].tickets ? Object.values(activeStates[tid].tickets) : [];
+            
             if (['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(estadoActual)) return true;
-            if (tkts.length === 0) { alert("Agregue al menos un Ticket para validar la gestión."); return false; }
+            
+            if (tktsArray.length === 0) { 
+                alert("⚠️ Añade al menos un Ticket para validar la gestión."); return false; 
+            }
             if (estadoActual === 'Atención Presencial' && nuevoEstado !== 'Traslado a Lab') {
-                if (tkts.some(t => !t.sinOT && t.cierreOT === "")) {
-                    alert("⚠️ Falta asignar la Hora Cierre OT en los tickets antes de finalizar."); return false;
-                }
+                let faltanOT = false;
+                tktsArray.forEach(t => { if (!t.sinOT && (!t.cierreOT || t.cierreOT.trim() === "")) faltanOT = true; });
+                if (faltanOT) { alert("⚠️ Falta asignar la Hora Cierre OT en los tickets activos antes de finalizar."); return false; }
             }
             return true;
         }
@@ -512,7 +571,6 @@
             if (!activeStates[tid]) return;
             if (!validarReglas(tid, null)) return;
             enviarRegistroASheets(tid);
-            // Al finalizar, borramos de Firebase para que quede inactivo en todos lados
             database.ref('activeStates/' + tid).remove();
             document.getElementById(`obs_${tid}`).value = "";
         }
@@ -520,13 +578,15 @@
         function enviarRegistroASheets(tid) {
             const data = activeStates[tid];
             const techInfo = estructuraTecnicos.find(t => t.id === tid);
-            const ahora = Date.now();
-            const duracionStr = formatearSegundosCadena(Math.floor((ahora - data.startTimeMs) / 1000));
+            const duracionStr = formatearSegundosCadena(Math.max(0, Math.floor((Date.now() - data.startTimeMs) / 1000)));
 
+            let tktsArray = data.tickets ? Object.values(data.tickets) : [];
             let tkts = [], urgs = [], cierres = [];
-            (data.tickets || []).forEach(t => {
+            
+            tktsArray.forEach(t => {
                 tkts.push(t.id); urgs.push(t.urgencia); cierres.push(t.sinOT ? "Sin OT" : (t.cierreOT || "N/A"));
             });
+            
             if(['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(data.estado)){
                 tkts = ["N/A"]; urgs = ["Baja"]; cierres = ["N/A"];
             }
@@ -551,14 +611,14 @@
             });
         }
 
-        // === 6. SOLUCIÓN DEFINITIVA A LOS RELOJES EN CELULAR ===
+        // === 7. SOLUCIÓN DEFINITIVA A LOS RELOJES EN CELULAR (ANTI-FREEZE) ===
         function ejecutarRelojesAbsolutos() {
             setInterval(() => {
                 const ahora = Date.now();
                 for (let tid in activeStates) {
                     if (activeStates[tid] && activeStates[tid].startTimeMs) {
-                        // Calcular tiempo matemáticamente. Nunca se desincroniza aunque la pantalla se apague.
-                        const diff = Math.floor((ahora - activeStates[tid].startTimeMs) / 1000);
+                        // El Math.max(0, diff) evita que si hay desfase de reloj el número sea negativo
+                        const diff = Math.max(0, Math.floor((ahora - activeStates[tid].startTimeMs) / 1000));
                         const tDisplay = document.getElementById(`timer_${tid}`);
                         if (tDisplay) tDisplay.innerText = formatearSegundosCadena(diff);
                     }
@@ -566,13 +626,21 @@
             }, 1000);
         }
 
-        // Forzar actualización visual si el navegador en el celular "despierta" de segundo plano
+        function formatearSegundosCadena(segundos) {
+            if (isNaN(segundos)) return "00:00:00";
+            const h = Math.floor(segundos / 3600).toString().padStart(2, '0');
+            const m = Math.floor((segundos % 3600) / 60).toString().padStart(2, '0');
+            const s = (segundos % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        // Forzar reactivación visual cuando la pantalla del celular despierta
         document.addEventListener("visibilitychange", function() {
             if (!document.hidden) {
                 const ahora = Date.now();
                 for (let tid in activeStates) {
                     if (activeStates[tid] && activeStates[tid].startTimeMs) {
-                        const diff = Math.floor((ahora - activeStates[tid].startTimeMs) / 1000);
+                        const diff = Math.max(0, Math.floor((ahora - activeStates[tid].startTimeMs) / 1000));
                         const tDisplay = document.getElementById(`timer_${tid}`);
                         if (tDisplay) tDisplay.innerText = formatearSegundosCadena(diff);
                     }
@@ -591,7 +659,8 @@
                 card.className = `live-card ${live ? 'active-state' : ''}`;
                 
                 if (live) {
-                    const tkts = (live.tickets || []).map(k => `${k.id} (${k.urgencia})`).join(", ") || "Ninguno";
+                    let tktsArray = live.tickets ? Object.values(live.tickets) : [];
+                    const tkts = tktsArray.map(k => `${k.id} (${k.urgencia})`).join(", ") || "Ninguno";
                     card.innerHTML = `<strong>👤 ${t.nombre}</strong><br>🟢 Estado: <b style="color:${live.color};">${live.estado}</b><br>🚗 Mov: ${live.tipoTraslado || 'A pie'}<br>🎫 Tkts: <i>${tkts}</i>`;
                 } else {
                     card.innerHTML = `<strong>👤 ${t.nombre}</strong><br>💤 Desconectado / Inactivo`;
