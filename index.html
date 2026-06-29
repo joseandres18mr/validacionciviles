@@ -92,7 +92,7 @@
 
     <div id="login-screen">
         <h2>🔒 Control de Residencia Civiles</h2>
-        <input type="email" id="email" placeholder="Usuario (ej: bvaldovinos@fcom.cl)">
+        <input type="email" id="email" placeholder="Usuario (ej: adm@fcom.cl)">
         <input type="password" id="password" placeholder="Contraseña">
         <button onclick="iniciarSesion()">Ingresar al Sistema</button>
         <p id="login-error">Credenciales inválidas o error de conexión.</p>
@@ -111,6 +111,7 @@
 
         <div id="tab-control" class="tab-content active">
             <div class="dashboard" id="dashboard">
+                
                 <div class="tech-card" id="card_t1">
                     <div class="tech-header"><h3 class="tech-name">Bastian Valdovinos</h3><span class="tech-project">PJUD 4</span></div>
                     <div class="status-display" id="status_t1"><span>Esperando Acción...</span><span class="timer" id="timer_t1">00:00:00</span></div>
@@ -216,10 +217,10 @@
                 <div class="kpi-card" style="border-left-color:#eab308;"><div class="kpi-title">Prom. Desviación en Lab.</div><div class="kpi-value" id="kpi-t-lab">0 min</div></div>
             </div>
 
-            <div class="controls-panel">
-                <div class="filter-group">
+            <div class="controls-panel" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; border-left: 5px solid #3b82f6;">
+                <div class="filter-group" style="display: flex; align-items: center; gap: 10px;">
                     <label style="font-weight:bold; color:#1e293b;">👤 Analizar Técnico Específico:</label>
-                    <select id="filterTech" onchange="actualizarDashboardMetrics()" style="padding:8px; border-radius:5px; min-width:200px;">
+                    <select id="filterTech" onchange="actualizarDashboardMetrics()" style="padding:8px; border-radius:5px; min-width:200px; border: 1px solid #cbd5e1;">
                         <option value="all">Todos (Visión General)</option>
                         <option value="Bastian Valdovinos">Bastián Valdovinos</option>
                         <option value="Bastian Cardenas">Bastián Cárdenas</option>
@@ -238,7 +239,7 @@
                 <h3>🔎 Historial Completo de Ciclo de Vida por Ticket</h3>
                 <div class="filter-group" style="margin-bottom:15px;">
                     <label style="font-weight:bold;">Selecciona un requerimiento activo:</label>
-                    <select id="filterTicket" onchange="dibujarGraficoTicket()" style="padding:8px; border-radius:5px; min-width:250px;"><option value="">-- Seleccione Ticket --</option></select>
+                    <select id="filterTicket" onchange="dibujarGraficoTicket()" style="padding:8px; border-radius:5px; min-width:250px; border: 1px solid #cbd5e1;"><option value="">-- Seleccione Ticket --</option></select>
                 </div>
                 <div style="height:250px; position:relative;"><canvas id="chartTicketBreakdown"></canvas></div>
             </div>
@@ -247,14 +248,14 @@
 
     <script>
         // === CONFIGURACIONES DEL ENTORNO ===
-        // IMPORTANTE: Reemplazar este objeto con las llaves de tu Consola de Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyYourActualAPIKeyHere_GetItFromFirebaseConsole",
-            authDomain: "tu-proyecto-pjud.firebaseapp.com",
-            projectId: "tu-proyecto-pjud",
-            storageBucket: "tu-proyecto-pjud.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456789"
+            apiKey: "AIzaSyCHimgA1iVDisy3SGOgnlpOrSAjMxz3G1Q",
+            authDomain: "auth-civiles.firebaseapp.com",
+            projectId: "auth-civiles",
+            storageBucket: "auth-civiles.firebasestorage.app",
+            messagingSenderId: "954664785497",
+            appId: "1:954664785497:web:6171575021bd8157ff4348",
+            measurementId: "G-0E9FNB1M9Q"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -423,7 +424,6 @@
                 }
             });
 
-            // Lógica campos obligatorios y bloqueos automáticos
             const estadosLibres = ['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'];
             const tktInput = document.getElementById(`tkt_${tid}`);
             const astTkt = document.getElementById(`ast_tkt_${tid}`);
@@ -436,7 +436,6 @@
                 astTkt.style.display = 'inline';
             }
 
-            // Candado de botón atención
             const btnAtencion = document.getElementById(`btn_atn_${tid}`);
             btnAtencion.disabled = !(estado === 'Traslado a Juzgados' || estado === 'Traslado a Lab' || estado === 'Atención Presencial');
 
@@ -577,6 +576,24 @@
             });
         }
 
+        function exportarCSV() {
+            if(bitacora.length === 0) { alert("No hay datos hoy."); return; }
+            let csv = "\uFEFFFecha;Hora Inicio;Hora Fin;Duración (HH:MM:SS);Técnico;Proyecto;Actividad;Ticket Mauweb / Contingencia;Hora Oficial Cierre OT;Observaciones\n";
+            bitacora.forEach(r => {
+                csv += `"${r.fecha}";"${r.horaInicio}";"${r.horaFin}";"${r.tiempo}";"${r.tecnico}";"${r.proyecto}";"${r.estado}";"${r.ticket}";"${r.cierreOT}";"${r.obs}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+            link.download = `Reporte_Residencia_Civiles_${new Date().toLocaleDateString('es-CL').replaceAll('-', '_').replaceAll('/', '_')}.csv`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        function limpiarDatosDiarios() {
+            if(confirm("⚠️ ¿Iniciar un nuevo día? Se limpiará la planilla de hoy (pero las métricas históricas se mantendrán).")) {
+                bitacora = []; activeStates = {}; localStorage.removeItem('bitacoraMulti'); localStorage.removeItem('activeStates'); location.reload();
+            }
+        }
+
         // ==========================================
         // MÓDULO INTELIGENTE DE DASHBOARD (METRICAS)
         // ==========================================
@@ -622,7 +639,6 @@
                 if (reg.ticket && reg.ticket !== 'N/A (Libre)') { ticketsUnicos.add(reg.ticket); }
             });
 
-            // Llenar Filtro de Tickets
             const tktSelect = document.getElementById('filterTicket');
             const preSeleccionado = tktSelect.value;
             tktSelect.innerHTML = '<option value="">-- Seleccione Ticket --</option>';
@@ -631,7 +647,6 @@
             });
             if(ticketsUnicos.has(preSeleccionado)) tktSelect.value = preSeleccionado;
 
-            // Calcular Promedios
             const pJuz = metricas['Traslado a Juzgados'].count ? Math.round(metricas['Traslado a Juzgados'].min / metricas['Traslado a Juzgados'].count) : 0;
             const pAtn = metricas['Atención Presencial'].count ? Math.round(metricas['Atención Presencial'].min / metricas['Atención Presencial'].count) : 0;
             const pLab = metricas['Traslado a Lab'].count ? Math.round(metricas['Traslado a Lab'].min / metricas['Traslado a Lab'].count) : 0;
@@ -641,7 +656,6 @@
             document.getElementById('kpi-t-atencion').innerText = pAtn + " min";
             document.getElementById('kpi-t-lab').innerText = pLab + " min";
 
-            // Gráfico 1: Horas Peak
             const labelsPeak = []; const dataPeak = [];
             for(let i = 7; i <= 19; i++) { labelsPeak.push(`${i}:00`); dataPeak.push(horasPeak[i]); }
             chartPeakInst = new Chart(document.getElementById('chartPeak'), {
@@ -650,14 +664,12 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // Gráfico 2: Tiempos Promedio
             chartPromInst = new Chart(document.getElementById('chartPromedios'), {
                 type: 'bar',
                 data: { labels: ['🚶 Traslado Civiles', '🛠️ Tiempo Atención', '🚶 Desviación Lab'], datasets: [{ data: [pJuz, pAtn, pLab], backgroundColor: ['#f28b2a', '#3b82f6', '#ef4444'] }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // Gráfico 3: Distribución Total
             chartDistInst = new Chart(document.getElementById('chartDistribucion'), {
                 type: 'doughnut',
                 data: { labels: Object.keys(actividadesCont), datasets: [{ data: Object.values(actividadesCont).map(v => Math.round(v)), backgroundColor: ['#d49a1e', '#f28b2a', '#ef4444', '#3b82f6', '#858c94', '#10b981'] }] },
@@ -688,7 +700,6 @@
             });
         }
 
-        // Módulos Auxiliares del Historial
         function limpiarHistorial() {
             if (confirm("🚨 ATENCIÓN: Se eliminará todo el registro acumulado de la marcha blanca de este navegador. ¿Proceder?")) {
                 bitacoraHistorica = []; localStorage.removeItem('bitacoraHistorica'); actualizarDashboardMetrics();
