@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema Operativo | Residencia Civiles</title>
+    <!-- Firebase SDKs Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -24,23 +26,22 @@
 
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 10px; color: #334155; -webkit-tap-highlight-color: transparent; }
         
-        /* Login Corporativo */
+        /* Login */
         #login-screen { max-width: 100%; margin: 5vh auto; background: white; padding: 40px 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; border-top: 8px solid var(--corp-blue); }
         #login-screen h2 { color: var(--corp-dark); margin-bottom: 25px; }
         #login-screen input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #f8fafc; transition: 0.3s; }
-        #login-screen input:focus { border-color: var(--corp-blue); outline: none; background: white; }
         #login-screen button { width: 100%; padding: 15px; background: var(--corp-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.3s; }
         #login-screen button:hover { background: var(--corp-dark); }
-        
         #app-content { display: none; }
         
-        /* Header Moderno */
+        /* Header */
         .header-bar { background: linear-gradient(135deg, var(--corp-dark) 0%, var(--corp-blue) 100%); color: white; padding: 15px 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         @media (min-width: 600px) { .header-bar { flex-direction: row; justify-content: space-between; text-align: left; } }
         .header-bar h2 { margin: 0; font-size: 1.25em; letter-spacing: 0.5px; }
         .logout-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .logout-btn:hover { background: var(--danger); border-color: var(--danger); }
 
+        /* Pestañas */
         .tabs { display: none; gap: 8px; margin-bottom: 20px; background: #e2e8f0; padding: 6px; border-radius: 10px; }
         .tab-btn { flex: 1; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #64748b; border-radius: 8px; transition: 0.3s; }
         .tab-btn.active { background: white; color: var(--corp-blue); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -53,20 +54,19 @@
         .admin-assign-panel h3 { margin: 0 0 15px 0; color: var(--corp-dark); }
         .assign-controls { display: flex; flex-wrap: wrap; gap: 12px; }
         .assign-controls select, .assign-controls input { padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; flex: 1; min-width: 150px; background: #f8fafc; }
-        .assign-controls button { background: var(--corp-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .assign-controls button:hover { background: var(--corp-dark); }
+        .assign-controls button { background: var(--corp-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
+        /* Tarjetas Operativas */
         .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .dashboard { grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); } }
         
-        /* Tarjetas Operativas Premium */
         .tech-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); display: none; flex-direction: column; border-top: 6px solid #cbd5e1; transition: 0.3s; }
         .tech-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 15px; }
         .tech-name { font-size: 1.2em; font-weight: 800; color: var(--corp-dark); margin: 0; }
         .tech-project { background: var(--corp-light); color: var(--corp-blue); padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 700; }
         
         .inbox-container { display: none; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 10px; margin-bottom: 15px; }
-        .inbox-item { background: white; padding: 10px; border-radius: 8px; border: 1px solid #bbf7d0; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .inbox-item { background: white; padding: 10px; border-radius: 8px; border: 1px solid #bbf7d0; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
         
         .status-display { padding: 15px; border-radius: 10px; text-align: center; font-size: 1.1em; font-weight: 600; background-color: #f1f5f9; color: #64748b; margin-bottom: 15px; border: 1px solid #e2e8f0; transition: 0.3s; }
         .timer { font-size: 1.8em; font-family: 'Courier New', Courier, monospace; display: block; margin-top: 5px; color: var(--corp-dark); font-weight: 800; letter-spacing: 2px; }
@@ -75,44 +75,52 @@
         .btn-state { padding: 15px 5px; border: 2px solid transparent; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; font-size: 12px; text-align: center; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .btn-state.inactive { opacity: 0.5; filter: grayscale(50%); background: #94a3b8 !important; }
         .btn-state.active { opacity: 1; border: 2px solid var(--corp-dark); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-        .btn-state:disabled { opacity: 0.2; cursor: not-allowed; }
+        .btn-state:disabled { opacity: 0.2; cursor: not-allowed; background: #cbd5e1 !important; border-color: transparent !important; box-shadow: none; transform: none; }
 
         .c-coordinacion { background-color: var(--btn-capj); }
         .c-traslado { background-color: var(--btn-traslado); }
         .c-atencion { background-color: var(--btn-atencion); }
         .c-colacion { background-color: var(--btn-colacion); }
 
-        /* Contenedores de inputs con diseño limpio */
         .input-group { margin-bottom: 15px; background: white; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
         .input-group.highlight { background: var(--corp-light); border-color: #bfdbfe; }
         .input-group label { font-size: 0.85em; font-weight: 700; color: #475569; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-group select, .input-group input[type="text"], .input-group input[type="time"], .input-group input[type="number"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #f8fafc; transition: 0.2s; }
-        .input-group select:focus, .input-group input:focus { border-color: var(--corp-blue); background: white; outline: none; }
-
+        .input-group select, .input-group input[type="text"], .input-group input[type="time"], .input-group input[type="number"] { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #f8fafc; }
+        
         .ticket-list-container { margin-top: 10px; max-height: 220px; overflow-y: auto; }
         .ticket-item { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid var(--info); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; font-size: 14px; }
         .ticket-item.critica { border-left-color: var(--danger); }
         .ticket-item.alta { border-left-color: var(--btn-traslado); }
-        .remove-tkt-btn { position: absolute; right: 10px; top: 10px; background: #e2e8f0; color: #64748b; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
-        .remove-tkt-btn:hover { background: var(--danger); color: white; }
+        .remove-tkt-btn { position: absolute; right: 10px; top: 10px; background: #e2e8f0; color: #64748b; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
 
-        .btn-add-ticket { background: var(--corp-dark); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
-        .btn-add-ticket:hover { background: var(--corp-blue); }
-        
-        .btn-finalizar { background-color: var(--danger); color: white; width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(220,38,38,0.2); transition: 0.3s; }
-        .btn-finalizar:hover { background-color: #b91c1c; transform: translateY(-1px); }
+        .btn-add-ticket { background: var(--corp-dark); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-finalizar { background-color: var(--danger); color: white; width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(220,38,38,0.2); }
 
         /* Monitor en vivo */
         .live-monitor-section { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .live-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
         @media (min-width: 768px) { .live-grid { grid-template-columns: repeat(3, 1fr); } }
-        .live-card { padding: 15px; border-radius: 10px; background: #f8fafc; border-left: 5px solid #cbd5e1; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .live-card { padding: 15px; border-radius: 10px; background: #f8fafc; border-left: 5px solid #cbd5e1; font-size: 14px; }
         .live-card.active-state { border-left-color: var(--corp-blue); background: var(--corp-light); }
         
-        .log-section { margin-top: 20px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow-x: auto; border: 1px solid #e2e8f0; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; }
-        th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
-        th { background-color: var(--corp-dark); color: white; }
+        /* Dashboard Métricas Modernizado */
+        .metrics-filters { display: flex; flex-wrap: wrap; gap: 15px; background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; align-items: flex-end; }
+        .metrics-filters .filter-box { flex: 1; min-width: 180px; }
+        .metrics-filters label { display: block; font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 5px; }
+        .metrics-filters select, .metrics-filters input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; }
+        .btn-export-metrics { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; height: 42px; display: flex; align-items: center; gap: 5px; }
+
+        .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .kpi-box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .kpi-box h4 { margin: 0 0 10px 0; color: #64748b; font-size: 13px; text-transform: uppercase; }
+        .kpi-box .val { font-size: 24px; font-weight: 900; color: var(--corp-dark); }
+        .kpi-box.warning .val { color: var(--btn-traslado); }
+
+        .charts-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
+        @media (min-width: 768px) { .charts-grid { grid-template-columns: 1fr 1fr; } }
+        .chart-box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; position: relative; height: 300px; }
+        .chart-full { grid-column: 1 / -1; height: 350px; }
+        .chart-box h3 { margin: 0 0 15px 0; font-size: 15px; color: var(--corp-dark); text-align: center; }
     </style>
 </head>
 <body>
@@ -136,6 +144,7 @@
             <button class="tab-btn" onclick="cambiarPestana('metrics')" id="btn-metrics">📈 Inteligencia ADM</button>
         </div>
 
+        <!-- PESTAÑA CONTROL TERRENO -->
         <div id="tab-control" class="tab-content active">
             
             <div class="admin-assign-panel" id="admin-assign-panel" style="display: none;">
@@ -171,19 +180,19 @@
                     ];
                 </script>
                 
+                <!-- Tarjeta T1 -->
                 <div class="tech-card" id="card_t1">
                     <div class="tech-header"><h3 class="tech-name">Bastián Valdovinos</h3><span class="tech-project">PJUD 4</span></div>
                     <div id="bandeja_asignados_t1" class="inbox-container"></div>
                     <div class="status-display" id="status_t1"><span>Descanso / Inactivo</span><span class="timer" id="timer_t1">00:00:00</span></div>
                     <div class="action-grid" id="actions_t1">
-                        <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="cambiarEstado('t1', 'En dependencia CAPJ', 'var(--btn-capj)')">🏢 En CAPJ</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a Juzgados" onclick="cambiarEstado('t1', 'Traslado a Juzgados', 'var(--btn-traslado)')">🚶 a Juzgados</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a Lab" onclick="cambiarEstado('t1', 'Traslado a Lab', 'var(--btn-traslado)')">🚶 a Lab.</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a CAPJ" onclick="cambiarEstado('t1', 'Traslado a CAPJ', 'var(--btn-traslado)')">🚶 a CAPJ</button>
-                        <button id="btn_atn_t1" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="cambiarEstado('t1', 'Atención Presencial', 'var(--btn-atencion)')" disabled>🛠️ Atención</button>
-                        <button class="btn-state c-colacion" data-estado="Colación" onclick="cambiarEstado('t1', 'Colación', 'var(--btn-colacion)')">🍔 Colación</button>
+                        <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="evaluarRumbo('t1', 'En dependencia CAPJ', 'var(--btn-capj)')">🏢 En CAPJ</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a Juzgados" onclick="evaluarRumbo('t1', 'Traslado a Juzgados', 'var(--btn-traslado)')">🚶 a Juzgados</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a Lab" onclick="evaluarRumbo('t1', 'Traslado a Lab', 'var(--btn-traslado)')">🚶 a Lab.</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a CAPJ" onclick="evaluarRumbo('t1', 'Traslado a CAPJ', 'var(--btn-traslado)')">🚶 a CAPJ</button>
+                        <button id="btn_atn_t1" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="evaluarRumbo('t1', 'Atención Presencial', 'var(--btn-atencion)')" disabled>🛠️ Atención</button>
+                        <button class="btn-state c-colacion" data-estado="Colación" onclick="evaluarRumbo('t1', 'Colación', 'var(--btn-colacion)')">🍔 Colación</button>
                     </div>
-                    
                     <div class="input-group highlight" id="grp_traslado_t1" style="display:none;">
                         <label>🚗 Medio de Transporte:</label>
                         <select id="tipo_traslado_t1" onchange="actualizarCostoVisible('t1'); guardarDatosEnNube('t1');">
@@ -196,7 +205,6 @@
                             <input type="number" id="costo_t1" placeholder="Ej: 850" onchange="guardarDatosEnNube('t1')">
                         </div>
                     </div>
-
                     <div class="input-group" id="grp_tickets_t1">
                         <label>🎫 Requerimientos en Curso:</label>
                         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
@@ -210,17 +218,18 @@
                     <button class="btn-finalizar" onclick="finalizarRegistro('t1')">⏹️ Finalizar y Guardar</button>
                 </div>
 
+                <!-- Tarjeta T2 -->
                 <div class="tech-card" id="card_t2">
                     <div class="tech-header"><h3 class="tech-name">Bastián Cárdenas</h3><span class="tech-project">PJUD 5</span></div>
                     <div id="bandeja_asignados_t2" class="inbox-container"></div>
                     <div class="status-display" id="status_t2"><span>Descanso / Inactivo</span><span class="timer" id="timer_t2">00:00:00</span></div>
                     <div class="action-grid" id="actions_t2">
-                        <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="cambiarEstado('t2', 'En dependencia CAPJ', 'var(--btn-capj)')">🏢 En CAPJ</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a Juzgados" onclick="cambiarEstado('t2', 'Traslado a Juzgados', 'var(--btn-traslado)')">🚶 a Juzgados</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a Lab" onclick="cambiarEstado('t2', 'Traslado a Lab', 'var(--btn-traslado)')">🚶 a Lab.</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a CAPJ" onclick="cambiarEstado('t2', 'Traslado a CAPJ', 'var(--btn-traslado)')">🚶 a CAPJ</button>
-                        <button id="btn_atn_t2" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="cambiarEstado('t2', 'Atención Presencial', 'var(--btn-atencion)')" disabled>🛠️ Atención</button>
-                        <button class="btn-state c-colacion" data-estado="Colación" onclick="cambiarEstado('t2', 'Colación', 'var(--btn-colacion)')">🍔 Colación</button>
+                        <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="evaluarRumbo('t2', 'En dependencia CAPJ', 'var(--btn-capj)')">🏢 En CAPJ</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a Juzgados" onclick="evaluarRumbo('t2', 'Traslado a Juzgados', 'var(--btn-traslado)')">🚶 a Juzgados</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a Lab" onclick="evaluarRumbo('t2', 'Traslado a Lab', 'var(--btn-traslado)')">🚶 a Lab.</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a CAPJ" onclick="evaluarRumbo('t2', 'Traslado a CAPJ', 'var(--btn-traslado)')">🚶 a CAPJ</button>
+                        <button id="btn_atn_t2" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="evaluarRumbo('t2', 'Atención Presencial', 'var(--btn-atencion)')" disabled>🛠️ Atención</button>
+                        <button class="btn-state c-colacion" data-estado="Colación" onclick="evaluarRumbo('t2', 'Colación', 'var(--btn-colacion)')">🍔 Colación</button>
                     </div>
                     <div class="input-group highlight" id="grp_traslado_t2" style="display:none;">
                         <label>🚗 Medio de Transporte:</label>
@@ -239,17 +248,18 @@
                     <button class="btn-finalizar" onclick="finalizarRegistro('t2')">⏹️ Finalizar y Guardar</button>
                 </div>
 
+                <!-- Tarjeta T3 -->
                 <div class="tech-card" id="card_t3">
                     <div class="tech-header"><h3 class="tech-name">Vicente Culiaciati</h3><span class="tech-project">PJUD 5</span></div>
                     <div id="bandeja_asignados_t3" class="inbox-container"></div>
                     <div class="status-display" id="status_t3"><span>Descanso / Inactivo</span><span class="timer" id="timer_t3">00:00:00</span></div>
                     <div class="action-grid" id="actions_t3">
-                        <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="cambiarEstado('t3', 'En dependencia CAPJ', 'var(--btn-capj)')">🏢 En CAPJ</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a Juzgados" onclick="cambiarEstado('t3', 'Traslado a Juzgados', 'var(--btn-traslado)')">🚶 a Juzgados</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a Lab" onclick="cambiarEstado('t3', 'Traslado a Lab', 'var(--btn-traslado)')">🚶 a Lab.</button>
-                        <button class="btn-state c-traslado" data-estado="Traslado a CAPJ" onclick="cambiarEstado('t3', 'Traslado a CAPJ', 'var(--btn-traslado)')">🚶 a CAPJ</button>
-                        <button id="btn_atn_t3" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="cambiarEstado('t3', 'Atención Presencial', 'var(--btn-atencion)')" disabled>🛠️ Atención</button>
-                        <button class="btn-state c-colacion" data-estado="Colación" onclick="cambiarEstado('t3', 'Colación', 'var(--btn-colacion)')">🍔 Colación</button>
+                        <button class="btn-state c-coordinacion" data-estado="En dependencia CAPJ" onclick="evaluarRumbo('t3', 'En dependencia CAPJ', 'var(--btn-capj)')">🏢 En CAPJ</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a Juzgados" onclick="evaluarRumbo('t3', 'Traslado a Juzgados', 'var(--btn-traslado)')">🚶 a Juzgados</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a Lab" onclick="evaluarRumbo('t3', 'Traslado a Lab', 'var(--btn-traslado)')">🚶 a Lab.</button>
+                        <button class="btn-state c-traslado" data-estado="Traslado a CAPJ" onclick="evaluarRumbo('t3', 'Traslado a CAPJ', 'var(--btn-traslado)')">🚶 a CAPJ</button>
+                        <button id="btn_atn_t3" class="btn-state c-atencion" data-estado="Atención Presencial" onclick="evaluarRumbo('t3', 'Atención Presencial', 'var(--btn-atencion)')" disabled>🛠️ Atención</button>
+                        <button class="btn-state c-colacion" data-estado="Colación" onclick="evaluarRumbo('t3', 'Colación', 'var(--btn-colacion)')">🍔 Colación</button>
                     </div>
                     <div class="input-group highlight" id="grp_traslado_t3" style="display:none;">
                         <label>🚗 Medio de Transporte:</label>
@@ -270,11 +280,67 @@
             </div>
         </div>
 
+        <!-- PESTAÑA MÉTRICAS ADM -->
         <div id="tab-metrics" class="tab-content">
-            <div style="background: white; padding: 30px; border-radius: 12px; margin-top: 15px; text-align: center; border: 1px solid #e2e8f0;">
-                <h3 style="color: var(--corp-dark); font-size: 1.5em;">📊 Motor Analítico Activo</h3>
-                <p style="color: #64748b; font-size: 1.1em;">Los algoritmos de rendimiento se están procesando directamente en el repositorio de Google Sheets.</p>
+            
+            <div class="metrics-filters">
+                <div class="filter-box">
+                    <label>📅 Filtrar por Fecha:</label>
+                    <input type="date" id="filterDate" onchange="procesarMetricasGlobales()">
+                </div>
+                <div class="filter-box">
+                    <label>⏱️ Turno Horario:</label>
+                    <select id="filterTurno" onchange="procesarMetricasGlobales()">
+                        <option value="all">Jornada Completa</option>
+                        <option value="AM">Mañana (AM)</option>
+                        <option value="PM">Tarde (PM)</option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <label>👤 Técnico:</label>
+                    <select id="filterTech" onchange="procesarMetricasGlobales()">
+                        <option value="all">Todos los Técnicos</option>
+                        <option value="Bastián Valdovinos">Bastián Valdovinos</option>
+                        <option value="Bastián Cárdenas">Bastián Cárdenas</option>
+                        <option value="Vicente Culiaciati">Vicente Culiaciati</option>
+                    </select>
+                </div>
+                <button class="btn-export-metrics" onclick="exportarMetricasFiltradasExcel()">⬇️ Exportar Data Filtrada</button>
             </div>
+
+            <!-- KPIs -->
+            <div class="kpi-container">
+                <div class="kpi-box"><h4>Total Atenciones</h4><div class="val" id="kpi-total-atn">0</div></div>
+                <div class="kpi-box"><h4>Tiempo Total Atención</h4><div class="val" id="kpi-sum-atn">0m</div></div>
+                <div class="kpi-box warning"><h4>T. Perdido Tránsito</h4><div class="val" id="kpi-sum-transito">0m</div></div>
+                <div class="kpi-box"><h4>Tránsito a Lab</h4><div class="val" id="kpi-sum-lab">0m</div></div>
+                <div class="kpi-box"><h4>Tránsito a Civiles</h4><div class="val" id="kpi-sum-civiles">0m</div></div>
+                <div class="kpi-box"><h4>Tránsito a CAPJ</h4><div class="val" id="kpi-sum-capj">0m</div></div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-grid">
+                <div class="chart-box chart-full">
+                    <h3>📈 Rendimiento del Periodo por Técnico (Atenciones vs Tiempos Muertos)</h3>
+                    <canvas id="chartMensual"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>🕒 Distribución de Tiempos Global</h3>
+                    <canvas id="chartDistribucion"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>⏳ Tiempos por Requerimiento Específico (Top 10 más largos)</h3>
+                    <canvas id="chartTiemposReq"></canvas>
+                </div>
+            </div>
+
+            <!-- Carga de Historial -->
+            <div style="background: white; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px dashed #cbd5e1; text-align: center;">
+                <h4 style="margin-top:0;">Importar Historial (CSV)</h4>
+                <input type="file" id="csvFileInput" accept=".csv" multiple onchange="importarCSVs(event)">
+                <button onclick="limpiarHistorial()" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; margin-left:10px;">Borrar Historial Memoria</button>
+            </div>
+
         </div>
     </div>
 
@@ -298,6 +364,11 @@
 
         const rolesMapping = { "adm@fcom.cl": "admin", "bvaldovinos@fcom.cl": "t1", "bcardenas@fcom.cl": "t2", "vculiaciati@fcom.cl": "t3" };
         let activeStates = {}; let currentRole = "";
+        let bitacoraHistorica = JSON.parse(localStorage.getItem('bitacoraHistorica')) || [];
+        
+        // Gráficos
+        let cMensualInst, cDistInst, cReqInst;
+        let dataFiltradaMetricas = []; // Para exportar excel desde metricas
 
         // === 2. AUTENTICACIÓN ===
         auth.onAuthStateChanged(user => {
@@ -316,10 +387,7 @@
             }
         });
 
-        function iniciarSesion() {
-            auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(() => document.getElementById('login-error').style.display = 'block');
-        }
+        function iniciarSesion() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(() => document.getElementById('login-error').style.display = 'block'); }
         function cerrarSesion() { auth.signOut(); }
 
         function prepararVistas() {
@@ -340,19 +408,17 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${pid}`).classList.add('active');
             document.getElementById(`btn-${pid}`).classList.add('active');
+            if(pid === 'metrics') procesarMetricasGlobales();
         }
 
-        // === 3. SINCRONIZACIÓN Y COSTOS ===
+        // === 3. SINCRONIZACIÓN Y ESTADOS EN VIVO ===
         function iniciarSincronizacionNube() {
             database.ref('activeStates').on('value', (snapshot) => {
-                const datosNube = snapshot.val() || {};
-                activeStates = datosNube;
+                activeStates = snapshot.val() || {};
                 if (currentRole === "admin") {
-                    estructuraTecnicos.forEach(t => refrescarTarjeta(t.id, datosNube[t.id]));
-                    actualizarMonitorAdmin(datosNube);
-                } else {
-                    refrescarTarjeta(currentRole, datosNube[currentRole]);
-                }
+                    estructuraTecnicos.forEach(t => refrescarTarjeta(t.id, activeStates[t.id]));
+                    actualizarMonitorAdmin(activeStates);
+                } else { refrescarTarjeta(currentRole, activeStates[currentRole]); }
             });
             database.ref('assignedTickets').on('value', (snapshot) => {
                 const assignedData = snapshot.val() || {};
@@ -364,54 +430,93 @@
         function actualizarCostoVisible(tid) {
             const tipo = document.getElementById(`tipo_traslado_${tid}`).value;
             const divCosto = document.getElementById(`div_costo_${tid}`);
-            if(tipo === 'A pie') {
-                divCosto.style.display = 'none';
-                document.getElementById(`costo_${tid}`).value = '';
-            } else {
-                divCosto.style.display = 'block';
+            if(tipo === 'A pie') { divCosto.style.display = 'none'; document.getElementById(`costo_${tid}`).value = ''; } 
+            else { divCosto.style.display = 'block'; }
+        }
+
+        // === 4. LÓGICA CONDICIONAL DE BOTONES (MÁQUINA DE ESTADOS) ===
+        function evaluarRumbo(tid, nuevoEstado, color) {
+            const estadoActual = activeStates[tid] ? activeStates[tid].estado : 'Inactivo';
+
+            // 1. Condicional: Advertencia de cambio de rumbo si va a Juzgados
+            if (estadoActual === 'Traslado a Juzgados' && (nuevoEstado === 'Traslado a Lab' || nuevoEstado === 'Traslado a CAPJ')) {
+                if (!confirm("⚠️ ¿Estás seguro que quieres cambiar tu rumbo en pleno traslado?")) return;
             }
+
+            // 2. Condicional: Advertencia de Laboratorio para auto-llenado
+            if (nuevoEstado === 'Traslado a Lab') {
+                if (confirm("💡 ¿Vas al laboratorio a un cambio de equipo? Nosotros anotamos la observación por ti. ¿Deseas hacerlo?")) {
+                    document.getElementById(`obs_${tid}`).value = "A laboratorio a buscar / dejar equipo para su instalación";
+                    // Se guardará automáticamente al cambiar el estado en Firebase
+                }
+            }
+
+            cambiarEstado(tid, nuevoEstado, color);
         }
 
         function refrescarTarjeta(tid, data) {
             if (data && data.estado) {
+                const estado = data.estado;
                 const sBox = document.getElementById(`status_${tid}`);
                 sBox.style.backgroundColor = data.color;
-                sBox.style.color = (data.color === 'var(--btn-traslado)' || data.color === 'var(--btn-colacion)') ? '#fff' : 'white';
-                sBox.querySelector('span:first-child').innerHTML = `Actividad: <b>${data.estado}</b>`;
+                sBox.style.color = (data.color === 'var(--btn-traslado)' || data.color === 'var(--btn-colacion)' || data.color === 'var(--btn-capj)') ? '#fff' : 'white';
+                sBox.querySelector('span:first-child').innerHTML = `Actividad: <b>${estado}</b>`;
                 document.getElementById(`card_${tid}`).style.borderColor = data.color;
 
-                const gridButtons = document.getElementById(`actions_${tid}`).querySelectorAll('.btn-state');
-                gridButtons.forEach(btn => {
-                    if (btn.getAttribute('data-estado') === data.estado) {
-                        btn.classList.remove('inactive'); btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active'); btn.classList.add('inactive');
-                    }
+                // --- LÓGICA DE HABILITACIÓN DE BOTONES ---
+                const btnCapj = document.querySelector(`#actions_${tid} [data-estado="En dependencia CAPJ"]`);
+                const btnJuzgados = document.querySelector(`#actions_${tid} [data-estado="Traslado a Juzgados"]`);
+                const btnLab = document.querySelector(`#actions_${tid} [data-estado="Traslado a Lab"]`);
+                const btnTCapj = document.querySelector(`#actions_${tid} [data-estado="Traslado a CAPJ"]`);
+                const btnAtn = document.querySelector(`#actions_${tid} [data-estado="Atención Presencial"]`);
+                const btnCol = document.querySelector(`#actions_${tid} [data-estado="Colación"]`);
+                
+                // Reiniciar todos primero, luego apagar y colorear el activo
+                [btnCapj, btnJuzgados, btnLab, btnTCapj, btnAtn, btnCol].forEach(b => { 
+                    b.disabled = false; b.classList.remove('active'); b.classList.remove('inactive'); 
                 });
 
-                document.getElementById(`grp_traslado_${tid}`).style.display = data.estado.includes('Traslado') ? 'block' : 'none';
-                
+                if (estado === 'En dependencia CAPJ') {
+                    btnCapj.disabled = true; btnAtn.disabled = true; btnTCapj.disabled = true;
+                    btnCapj.classList.add('active'); [btnJuzgados, btnLab, btnCol].forEach(b => b.classList.add('inactive'));
+                } 
+                else if (estado === 'Traslado a Juzgados') {
+                    btnJuzgados.disabled = true; btnCapj.disabled = true;
+                    btnJuzgados.classList.add('active'); [btnLab, btnTCapj, btnAtn, btnCol].forEach(b => b.classList.add('inactive'));
+                } 
+                else if (estado === 'Atención Presencial') {
+                    btnAtn.disabled = true; btnJuzgados.disabled = true; btnCapj.disabled = true;
+                    btnAtn.classList.add('active'); [btnLab, btnTCapj, btnCol].forEach(b => b.classList.add('inactive'));
+                } 
+                else if (estado === 'Traslado a Lab') {
+                    btnLab.disabled = true; btnJuzgados.disabled = true;
+                    btnLab.classList.add('active'); [btnCapj, btnTCapj, btnAtn, btnCol].forEach(b => b.classList.add('inactive'));
+                } 
+                else if (estado === 'Traslado a CAPJ') {
+                    btnTCapj.disabled = true; btnAtn.disabled = true; btnJuzgados.disabled = true; btnLab.disabled = true;
+                    btnTCapj.classList.add('active'); [btnCapj, btnCol].forEach(b => b.classList.add('inactive'));
+                } 
+                else if (estado === 'Colación') {
+                    btnCol.disabled = true;
+                    btnCol.classList.add('active'); [btnCapj, btnJuzgados, btnLab, btnTCapj, btnAtn].forEach(b => b.classList.add('inactive'));
+                }
+
+                // UI Restante
+                document.getElementById(`grp_traslado_${tid}`).style.display = estado.includes('Traslado') ? 'block' : 'none';
                 const tktArea = document.getElementById(`grp_tickets_${tid}`);
-                if (['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(data.estado)) {
+                if (['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(estado)) {
                     tktArea.style.pointerEvents = 'none'; tktArea.style.opacity = '0.5';
                 } else {
                     tktArea.style.pointerEvents = 'auto'; tktArea.style.opacity = '1';
                 }
 
-                document.getElementById(`btn_atn_${tid}`).disabled = !(data.estado === 'Traslado a Juzgados' || data.estado === 'Traslado a Lab' || data.estado === 'Atención Presencial');
-
                 if (currentRole === "admin") {
-                    if(data.tipoTraslado) {
-                        document.getElementById(`tipo_traslado_${tid}`).value = data.tipoTraslado;
-                        actualizarCostoVisible(tid);
-                    }
+                    if(data.tipoTraslado) { document.getElementById(`tipo_traslado_${tid}`).value = data.tipoTraslado; actualizarCostoVisible(tid); }
                     if(data.montoTraslado) document.getElementById(`costo_${tid}`).value = data.montoTraslado;
                     if(data.obsInput) document.getElementById(`obs_${tid}`).value = data.obsInput;
                 }
                 pintarTicketsDOM(tid, data.tickets);
-            } else {
-                limpiarTarjetaVisual(tid);
-            }
+            } else { limpiarTarjetaVisual(tid); }
         }
 
         function limpiarTarjetaVisual(tid) {
@@ -420,16 +525,25 @@
             sBox.querySelector('span:first-child').innerHTML = `Descanso / Inactivo`;
             document.getElementById(`timer_${tid}`).innerText = "00:00:00";
             document.getElementById(`card_${tid}`).style.borderColor = '#cbd5e1';
-            document.getElementById(`actions_${tid}`).querySelectorAll('.btn-state').forEach(b => {
-                b.classList.remove('active'); b.classList.remove('inactive');
-            });
+            
+            const btnCapj = document.querySelector(`#actions_${tid} [data-estado="En dependencia CAPJ"]`);
+            const btnJuzgados = document.querySelector(`#actions_${tid} [data-estado="Traslado a Juzgados"]`);
+            const btnLab = document.querySelector(`#actions_${tid} [data-estado="Traslado a Lab"]`);
+            const btnTCapj = document.querySelector(`#actions_${tid} [data-estado="Traslado a CAPJ"]`);
+            const btnAtn = document.querySelector(`#actions_${tid} [data-estado="Atención Presencial"]`);
+            const btnCol = document.querySelector(`#actions_${tid} [data-estado="Colación"]`);
+            
+            // Si está inactivo, bloquear atencion y tcapj por logica
+            [btnCapj, btnJuzgados, btnLab, btnTCapj, btnAtn, btnCol].forEach(b => { b.disabled = false; b.classList.remove('active'); b.classList.remove('inactive'); });
+            btnAtn.disabled = true; btnTCapj.disabled = true;
+
             document.getElementById(`tkt_list_${tid}`).innerHTML = "";
             document.getElementById(`tipo_traslado_${tid}`).value = "A pie";
             document.getElementById(`costo_${tid}`).value = "";
             actualizarCostoVisible(tid);
         }
 
-        // === 4. ASIGNACIÓN ===
+        // === 5. ASIGNACIÓN ===
         function asignarTicketDesdeAdmin() {
             const tid = document.getElementById('assign_tech').value;
             const tkt = document.getElementById('assign_tkt_id').value.trim();
@@ -444,7 +558,7 @@
             if(!container) return;
             if (!data) { container.style.display = "none"; container.innerHTML = ""; return; }
             container.style.display = "block";
-            container.innerHTML = `<strong style="color:var(--success);">📥 Bandeja de Entrada (Nuevos):</strong><div id="list_asignados_${tid}"></div>`;
+            container.innerHTML = `<strong style="color:var(--success);">📥 Bandeja de Entrada:</strong><div id="list_asignados_${tid}"></div>`;
             const list = document.getElementById(`list_asignados_${tid}`);
             Object.entries(data).forEach(([key, t]) => {
                 const div = document.createElement('div'); div.className = "inbox-item";
@@ -456,8 +570,8 @@
         }
 
         function tomarTicketAsignado(tid, fbKey, tktId, urgencia) {
-            if (!activeStates[tid] || !activeStates[tid].estado) {
-                alert("⚠️ Selecciona un estado (ej: Traslado a Juzgados) antes de tomar el ticket."); return;
+            if (!activeStates[tid] || !activeStates[tid].estado || ['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(activeStates[tid].estado)) {
+                alert("⚠️ Selecciona un estado activo en terreno (ej: Traslado a Juzgados) antes de tomar el ticket."); return;
             }
             let tktsArray = activeStates[tid].tickets ? (Array.isArray(activeStates[tid].tickets) ? activeStates[tid].tickets : Object.values(activeStates[tid].tickets)) : [];
             tktsArray.push({ id: tktId, urgencia: urgencia, cierreOT: "", sinOT: false });
@@ -466,14 +580,20 @@
             database.ref('assignedTickets/' + tid + '/' + fbKey).remove();
         }
 
-        // === 5. FLUJO OPERATIVO ===
+        // === 6. FLUJO OPERATIVO ===
         function cambiarEstado(tid, nuevoEstado, color) {
             if (activeStates[tid] && activeStates[tid].estado) {
                 if(!validarReglas(tid, nuevoEstado)) return;
                 enviarRegistroASheets(tid);
             }
+            
+            // Extraer hora para ventana AM/PM
+            let hInicioStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let hr = new Date().getHours();
+            let ventana = hr < 13 ? "AM" : "PM";
+
             const newState = {
-                estado: nuevoEstado, color: color, startTimeMs: Date.now(), horaInicioStr: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                estado: nuevoEstado, color: color, startTimeMs: Date.now(), horaInicioStr: hInicioStr, ventana: ventana,
                 tipoTraslado: document.getElementById(`tipo_traslado_${tid}`).value,
                 montoTraslado: document.getElementById(`costo_${tid}`).value,
                 obsInput: document.getElementById(`obs_${tid}`).value,
@@ -559,7 +679,10 @@
         function enviarRegistroASheets(tid) {
             const data = activeStates[tid];
             const techInfo = estructuraTecnicos.find(t => t.id === tid);
-            const duracionStr = formatearSegundosCadena(Math.max(0, Math.floor((Date.now() - data.startTimeMs) / 1000)));
+            const fechaStr = new Date().toLocaleDateString('es-CL');
+            const hFinStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const duracionSeg = Math.max(0, Math.floor((Date.now() - data.startTimeMs) / 1000));
+            const duracionStr = formatearSegundosCadena(duracionSeg);
 
             let tktsArray = data.tickets ? Object.values(data.tickets) : [];
             let tkts = [], urgs = [], cierres = [];
@@ -569,27 +692,28 @@
                 tkts = ["N/A"]; urgs = ["Baja"]; cierres = ["N/A"];
             }
 
-            // Separación de columnas (A pie, Transporte, Monto)
-            let tipoTrasladoFinal = "N/A";
-            let montoFinal = "";
+            let tipoTrasladoFinal = "N/A"; let montoFinal = "";
             if(data.estado.includes('Traslado')) {
                 tipoTrasladoFinal = data.tipoTraslado || "A pie";
-                if(tipoTrasladoFinal !== "A pie" && data.montoTraslado) {
-                    montoFinal = data.montoTraslado;
-                }
+                if(tipoTrasladoFinal !== "A pie" && data.montoTraslado) montoFinal = data.montoTraslado;
             }
 
             const registro = {
-                fecha: new Date().toLocaleDateString('es-CL'), horaInicio: data.horaInicioStr, horaFin: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                tiempo: duracionStr, tecnico: techInfo.nombre, proyecto: techInfo.proyecto, estado: data.estado,
+                fecha: fechaStr, horaInicio: data.horaInicioStr, horaFin: hFinStr, tiempo: duracionStr,
+                tecnico: techInfo.nombre, proyecto: techInfo.proyecto, estado: data.estado, ventana: data.ventana || 'AM',
                 ticket: tkts.join(", "), urgencia: urgs.join(", "), cierreOT: cierres.join(", "),
                 tipoTraslado: tipoTrasladoFinal, montoTraslado: montoFinal, obs: data.obsInput || ""
             };
 
+            // Enviar a la nube Sheet
             fetch(GOOGLE_SHEET_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(registro) });
+            
+            // Guardar local para metricas
+            bitacoraHistorica.push(registro);
+            localStorage.setItem('bitacoraHistorica', JSON.stringify(bitacoraHistorica));
+            if (document.getElementById('tab-metrics').classList.contains('active')) procesarMetricasGlobales();
         }
 
-        // === 6. RELOJES ANTI-FREEZE ===
         function ejecutarRelojesAbsolutos() {
             setInterval(() => {
                 const ahora = Date.now();
@@ -634,16 +758,188 @@
                 if (live) {
                     let tktsArray = live.tickets ? Object.values(live.tickets) : [];
                     const tkts = tktsArray.map(k => `${k.id} (${k.urgencia})`).join(", ") || "Ninguno";
-                    
                     let transInfo = live.tipoTraslado || 'A pie';
                     if(transInfo !== 'A pie' && live.montoTraslado) transInfo += ` | 💲 $${live.montoTraslado}`;
-
                     card.innerHTML = `<strong>👤 ${t.nombre}</strong><br>🟢 Estado: <b style="color:${live.color};">${live.estado}</b><br>🚗 Mov: ${transInfo}<br>🎫 Tkts: <i>${tkts}</i>`;
                 } else {
                     card.innerHTML = `<strong>👤 ${t.nombre}</strong><br>💤 Desconectado / Inactivo`;
                 }
                 grid.appendChild(card);
             });
+        }
+
+        // === 7. PANEL DE MÉTRICAS ADM AVANZADO ===
+        function tiempoAMinutos(tStr) {
+            if(!tStr) return 0; const p = tStr.split(':');
+            return p.length === 3 ? parseInt(p[0])*60 + parseInt(p[1]) + parseInt(p[2])/60 : 0;
+        }
+
+        function parsearFechaLocal(fStr) {
+            // Convierte DD/MM/YYYY o DD-MM-YYYY a YYYY-MM-DD para poder comparar con el input date
+            if(!fStr) return "";
+            let p = fStr.split(/[-/]/);
+            if(p.length===3) {
+                // si el año está de primero (raro pero posible)
+                if(p[0].length === 4) return `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+                // si el año está de ultimo
+                return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+            }
+            return "";
+        }
+
+        function procesarMetricasGlobales() {
+            if (cMensualInst) cMensualInst.destroy();
+            if (cDistInst) cDistInst.destroy();
+            if (cReqInst) cReqInst.destroy();
+
+            // 1. Obtener Filtros
+            const fDate = document.getElementById('filterDate').value; // YYYY-MM-DD
+            const fTurno = document.getElementById('filterTurno').value;
+            const fTech = document.getElementById('filterTech').value;
+
+            // 2. Filtrar Data
+            dataFiltradaMetricas = bitacoraHistorica.filter(r => {
+                let passTech = fTech === 'all' || r.tecnico === fTech;
+                let passTurno = fTurno === 'all' || r.ventana === fTurno;
+                let passDate = true;
+                if (fDate) {
+                    const rDate = parsearFechaLocal(r.fecha);
+                    passDate = (rDate === fDate);
+                }
+                return passTech && passTurno && passDate;
+            });
+
+            // 3. Variables de cálculo
+            let sumLab = 0, sumCiviles = 0, sumCapj = 0;
+            let sumAtn = 0, countAtn = 0;
+            
+            // Datos para gráficos
+            let rendimientoTecnicos = {}; // Nombre -> { atencion: min, traslados: min }
+            let distribucionTiempos = {}; // Estado -> min
+            let topRequerimientos = []; // { tkts, min }
+
+            dataFiltradaMetricas.forEach(r => {
+                const min = tiempoAMinutos(r.tiempo);
+                
+                // KPIs Transporte
+                if (r.estado === 'Traslado a Lab') sumLab += min;
+                if (r.estado === 'Traslado a Juzgados') sumCiviles += min;
+                if (r.estado === 'Traslado a CAPJ') sumCapj += min;
+                
+                // KPIs Atención
+                if (r.estado === 'Atención Presencial') {
+                    sumAtn += min; countAtn++;
+                    if(r.ticket && r.ticket !== 'N/A') topRequerimientos.push({ t: r.ticket, m: min, tec: r.tecnico });
+                }
+
+                // Chart Distribucion
+                distribucionTiempos[r.estado] = (distribucionTiempos[r.estado] || 0) + min;
+
+                // Chart Rendimiento por Técnico
+                if (!rendimientoTecnicos[r.tecnico]) rendimientoTecnicos[r.tecnico] = { atn: 0, trans: 0 };
+                if (r.estado === 'Atención Presencial') rendimientoTecnicos[r.tecnico].atn += min;
+                if (r.estado.includes('Traslado')) rendimientoTecnicos[r.tecnico].trans += min;
+            });
+
+            const sumTransitoTotal = sumLab + sumCiviles + sumCapj;
+
+            // Renderizar KPIs
+            document.getElementById('kpi-total-atn').innerText = countAtn;
+            document.getElementById('kpi-sum-atn').innerText = Math.round(sumAtn) + "m";
+            document.getElementById('kpi-sum-transito').innerText = Math.round(sumTransitoTotal) + "m";
+            document.getElementById('kpi-sum-lab').innerText = Math.round(sumLab) + "m";
+            document.getElementById('kpi-sum-civiles').innerText = Math.round(sumCiviles) + "m";
+            document.getElementById('kpi-sum-capj').innerText = Math.round(sumCapj) + "m";
+
+            // Chart: Rendimiento por Técnico
+            const techLabels = Object.keys(rendimientoTecnicos);
+            const dataAtn = techLabels.map(t => Math.round(rendimientoTecnicos[t].atn));
+            const dataTrans = techLabels.map(t => Math.round(rendimientoTecnicos[t].trans));
+
+            cMensualInst = new Chart(document.getElementById('chartMensual'), {
+                type: 'bar',
+                data: {
+                    labels: techLabels,
+                    datasets: [
+                        { label: 'Minutos en Atención', data: dataAtn, backgroundColor: '#2563eb' },
+                        { label: 'Minutos Perdidos en Tránsito', data: dataTrans, backgroundColor: '#d97706' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true } } }
+            });
+
+            // Chart: Distribución
+            cDistInst = new Chart(document.getElementById('chartDistribucion'), {
+                type: 'doughnut',
+                data: { 
+                    labels: Object.keys(distribucionTiempos), 
+                    datasets: [{ data: Object.values(distribucionTiempos).map(v => Math.round(v)), backgroundColor: ['#475569', '#d97706', '#2563eb', '#94a3b8', '#dc2626', '#16a34a'] }] 
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // Chart: Top Tiempos Requerimiento
+            topRequerimientos.sort((a, b) => b.m - a.m);
+            const top10 = topRequerimientos.slice(0, 10);
+            
+            cReqInst = new Chart(document.getElementById('chartTiemposReq'), {
+                type: 'bar',
+                data: {
+                    labels: top10.map(x => x.t),
+                    datasets: [{ label: 'Minutos consumidos', data: top10.map(x => Math.round(x.m)), backgroundColor: '#10b981', borderRadius: 4 }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function exportarMetricasFiltradasExcel() {
+            if(dataFiltradaMetricas.length === 0) { alert("No hay datos filtrados para exportar."); return; }
+            let csv = "\uFEFFFecha;Turno;Hora Inicio;Hora Fin;Duración;Técnico;Proyecto;Actividad;Tickets;Urgencias;Cierres OT;Transporte;Monto ($);Observaciones\n";
+            dataFiltradaMetricas.forEach(r => {
+                csv += `"${r.fecha}";"${r.ventana}";"${r.horaInicio}";"${r.horaFin}";"${r.tiempo}";"${r.tecnico}";"${r.proyecto}";"${r.estado}";"${r.ticket}";"${r.urgencia}";"${r.cierreOT}";"${r.tipoTraslado}";"${r.montoTraslado}";"${r.obs}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+            link.download = `Reporte_ADM_Filtrado_${new Date().getTime()}.csv`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        function importarCSVs(event) {
+            const archivos = event.target.files;
+            if (!archivos || archivos.length === 0) return;
+            let procesados = 0;
+            Array.from(archivos).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const lineas = e.target.result.split('\n').filter(l => l.trim() !== "");
+                    for (let i = 1; i < lineas.length; i++) {
+                        let col = lineas[i].split(';');
+                        if (col.length >= 7) {
+                            let cl = col.map(c => c.replace(/^"|"$/g, '').trim());
+                            bitacoraHistorica.push({
+                                fecha: cl[0], ventana: cl[1] || 'AM', horaInicio: cl[2] || cl[1], horaFin: cl[3] || cl[2], tiempo: cl[4] || cl[3],
+                                tecnico: cl[5] || cl[4], proyecto: cl[6] || cl[5], estado: cl[7] || cl[6], ticket: cl[8] || cl[7],
+                                urgencia: cl[9] || cl[8], cierreOT: cl[10] || cl[9], tipoTraslado: cl[11] || cl[10], montoTraslado: cl[12] || cl[11], obs: cl[13] || cl[12]
+                            });
+                        }
+                    }
+                    procesados++;
+                    if (procesados === archivos.length) {
+                        localStorage.setItem('bitacoraHistorica', JSON.stringify(bitacoraHistorica));
+                        if(document.getElementById('tab-metrics').classList.contains('active')) procesarMetricasGlobales();
+                        alert("✅ Historial inyectado en memoria.");
+                        event.target.value = '';
+                    }
+                };
+                reader.readAsText(file, 'utf-8');
+            });
+        }
+
+        function limpiarHistorial() {
+            if (confirm("🚨 ATENCIÓN: Eliminarás todo el historial de métricas guardado en la memoria de este navegador. ¿Continuar?")) {
+                bitacoraHistorica = []; localStorage.removeItem('bitacoraHistorica'); 
+                if(document.getElementById('tab-metrics').classList.contains('active')) procesarMetricasGlobales();
+            }
         }
     </script>
 </body>
