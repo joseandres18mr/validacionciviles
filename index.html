@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema Operativo | Residencia Civiles</title>
-    <!-- Firebase SDKs Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -79,8 +77,6 @@
         
         .ticket-list-container { margin-top: 10px; max-height: 220px; overflow-y: auto; }
         .ticket-item { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid var(--info); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; font-size: 14px; }
-        .ticket-item.critica { border-left-color: var(--danger); }
-        .ticket-item.alta { border-left-color: var(--btn-traslado); }
         .remove-tkt-btn { position: absolute; right: 10px; top: 10px; background: #e2e8f0; color: #64748b; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
         .remove-tkt-btn:hover { background: var(--danger); color: white; }
 
@@ -95,9 +91,11 @@
         
         /* Dashboard Métricas Modernizado */
         .metrics-filters { display: flex; flex-wrap: wrap; gap: 15px; background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; align-items: flex-end; }
-        .metrics-filters .filter-box { flex: 1; min-width: 200px; }
+        .metrics-filters .filter-box { flex: 1; min-width: 180px; }
         .metrics-filters label { display: block; font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 5px; }
-        .btn-export-metrics { background: var(--success); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; height: 45px; display: flex; align-items: center; gap: 5px; }
+        .metrics-filters select, .metrics-filters input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; }
+        .btn-export-metrics { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; height: 42px; display: flex; align-items: center; gap: 5px; }
+        .btn-sync-cloud { background: var(--corp-blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; height: 42px; display: flex; align-items: center; gap: 5px; }
 
         .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .kpi-box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -133,7 +131,6 @@
             <button class="tab-btn" onclick="cambiarPestana('metrics')" id="btn-metrics">📈 Inteligencia ADM</button>
         </div>
 
-        <!-- PESTAÑA DE OPERACIÓN -->
         <div id="tab-control" class="tab-content active">
             
             <div class="admin-assign-panel" id="admin-assign-panel" style="display: none;">
@@ -169,7 +166,6 @@
                     ];
                 </script>
                 
-                <!-- Tarjeta T1 -->
                 <div class="tech-card" id="card_t1">
                     <div class="tech-header"><h3 class="tech-name">Bastián Valdovinos</h3><span class="tech-project">PJUD 4</span></div>
                     <div id="bandeja_asignados_t1" class="inbox-container"></div>
@@ -186,7 +182,7 @@
                     <div class="input-group highlight" id="grp_traslado_t1" style="display:none;">
                         <label>🚗 Medio de Transporte:</label>
                         <select id="tipo_traslado_t1" onchange="actualizarCostoVisible('t1'); guardarDatosEnNube('t1');">
-                            <option value="A pie">Caminando (A pie)</option><option value="Transporte Público">Transporte Público</option><option value="Vehículo">Vehículo Particular/Corp.</option>
+                            <option value="A pie">Caminando (A pie)</option><option value="Transporte Público">Transporte Público (Metro/Micro)</option><option value="Vehículo">Vehículo Particular/Corp.</option>
                         </select>
                         <div id="div_costo_t1" style="display:none; margin-top:12px;">
                             <label>💲 Monto Gastado en Pasaje/Peaje ($):</label>
@@ -197,7 +193,6 @@
                         <label>🎫 Requerimientos en Curso:</label>
                         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
                             <input type="text" id="new_tkt_id_t1" placeholder="Nº Mauweb" style="flex:1;">
-                            <select id="new_tkt_urg_t1" style="width:110px;"><option value="Baja">Baja</option><option value="Media" selected>Media</option><option value="Alta">Alta</option><option value="Crítica">Crítica</option></select>
                             <button type="button" class="btn-add-ticket" onclick="agregarTicketManual('t1')">+</button>
                         </div>
                         <div class="ticket-list-container" id="tkt_list_t1"></div>
@@ -206,7 +201,6 @@
                     <button class="btn-finalizar" onclick="finalizarRegistro('t1')">⏹️ Finalizar y Guardar</button>
                 </div>
 
-                <!-- Tarjeta T2 -->
                 <div class="tech-card" id="card_t2">
                     <div class="tech-header"><h3 class="tech-name">Bastián Cárdenas</h3><span class="tech-project">PJUD 5</span></div>
                     <div id="bandeja_asignados_t2" class="inbox-container"></div>
@@ -222,13 +216,13 @@
                     </div>
                     <div class="input-group highlight" id="grp_traslado_t2" style="display:none;">
                         <label>🚗 Medio de Transporte:</label>
-                        <select id="tipo_traslado_t2" onchange="actualizarCostoVisible('t2'); guardarDatosEnNube('t2');"><option value="A pie">Caminando (A pie)</option><option value="Transporte Público">Transporte Público</option><option value="Vehículo">Vehículo Particular/Corp.</option></select>
+                        <select id="tipo_traslado_t2" onchange="actualizarCostoVisible('t2'); guardarDatosEnNube('t2');"><option value="A pie">Caminando (A pie)</option><option value="Transporte Público">Transporte Público (Metro/Micro)</option><option value="Vehículo">Vehículo Particular/Corp.</option></select>
                         <div id="div_costo_t2" style="display:none; margin-top:12px;"><label>💲 Monto Gastado ($):</label><input type="number" id="costo_t2" placeholder="Ej: 850" onchange="guardarDatosEnNube('t2')"></div>
                     </div>
                     <div class="input-group" id="grp_tickets_t2">
                         <label>🎫 Requerimientos en Curso:</label>
                         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                            <input type="text" id="new_tkt_id_t2" placeholder="Nº Mauweb" style="flex:1;"><select id="new_tkt_urg_t2" style="width:110px;"><option value="Baja">Baja</option><option value="Media" selected>Media</option><option value="Alta">Alta</option><option value="Crítica">Crítica</option></select>
+                            <input type="text" id="new_tkt_id_t2" placeholder="Nº Mauweb" style="flex:1;">
                             <button type="button" class="btn-add-ticket" onclick="agregarTicketManual('t2')">+</button>
                         </div>
                         <div class="ticket-list-container" id="tkt_list_t2"></div>
@@ -237,7 +231,6 @@
                     <button class="btn-finalizar" onclick="finalizarRegistro('t2')">⏹️ Finalizar y Guardar</button>
                 </div>
 
-                <!-- Tarjeta T3 -->
                 <div class="tech-card" id="card_t3">
                     <div class="tech-header"><h3 class="tech-name">Vicente Culiaciati</h3><span class="tech-project">PJUD 5</span></div>
                     <div id="bandeja_asignados_t3" class="inbox-container"></div>
@@ -253,13 +246,13 @@
                     </div>
                     <div class="input-group highlight" id="grp_traslado_t3" style="display:none;">
                         <label>🚗 Medio de Transporte:</label>
-                        <select id="tipo_traslado_t3" onchange="actualizarCostoVisible('t3'); guardarDatosEnNube('t3');"><option value="A pie">Caminando (A pie)</option><option value="Transporte Público">Transporte Público</option><option value="Vehículo">Vehículo Particular/Corp.</option></select>
+                        <select id="tipo_traslado_t3" onchange="actualizarCostoVisible('t3'); guardarDatosEnNube('t3');"><option value="A pie">Caminando (A pie)</option><option value="Transporte Público">Transporte Público (Metro/Micro)</option><option value="Vehículo">Vehículo Particular/Corp.</option></select>
                         <div id="div_costo_t3" style="display:none; margin-top:12px;"><label>💲 Monto Gastado ($):</label><input type="number" id="costo_t3" placeholder="Ej: 850" onchange="guardarDatosEnNube('t3')"></div>
                     </div>
                     <div class="input-group" id="grp_tickets_t3">
                         <label>🎫 Requerimientos en Curso:</label>
                         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                            <input type="text" id="new_tkt_id_t3" placeholder="Nº Mauweb" style="flex:1;"><select id="new_tkt_urg_t3" style="width:110px;"><option value="Baja">Baja</option><option value="Media" selected>Media</option><option value="Alta">Alta</option><option value="Crítica">Crítica</option></select>
+                            <input type="text" id="new_tkt_id_t3" placeholder="Nº Mauweb" style="flex:1;">
                             <button type="button" class="btn-add-ticket" onclick="agregarTicketManual('t3')">+</button>
                         </div>
                         <div class="ticket-list-container" id="tkt_list_t3"></div>
@@ -270,7 +263,6 @@
             </div>
         </div>
 
-        <!-- PESTAÑA MÉTRICAS ADM -->
         <div id="tab-metrics" class="tab-content">
             
             <div class="metrics-filters">
@@ -298,7 +290,8 @@
                         <option value="Vicente Culiaciati">Vicente Culiaciati</option>
                     </select>
                 </div>
-                <button class="btn-export-metrics" onclick="exportarMetricasExcel()">⬇️ Exportar Data Filtrada</button>
+                <button class="btn-sync-cloud" onclick="sincronizarDesdeSheet()" id="btn-sync-sheet">🔄 Cargar Data Excel</button>
+                <button class="btn-export-metrics" onclick="exportarMetricasExcel()">⬇️ Exportar Filtro</button>
             </div>
 
             <div class="kpi-container">
@@ -325,18 +318,11 @@
                 </div>
             </div>
 
-            <div style="background: white; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px dashed #cbd5e1; text-align: center;">
-                <h4 style="margin-top:0;">Importar Historial (CSV)</h4>
-                <p style="font-size:12px; color:#64748b;">Asegúrate de cargar tu excel separado por punto y coma.</p>
-                <input type="file" id="csvFileInput" accept=".csv" multiple onchange="importarCSVs(event)">
-                <button onclick="limpiarHistorial()" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; margin-left:10px;">Borrar Historial Memoria</button>
-            </div>
-
         </div>
     </div>
 
     <script>
-        // === 1. CONFIGURACIÓN FIREBASE ===
+        // === 1. CONFIGURACIÓN FIREBASE Y SHEETS ===
         const firebaseConfig = {
             apiKey: "AIzaSyCHimgA1iVDisy3SGOgnlpOrSAjMxz3G1Q",
             authDomain: "auth-civiles.firebaseapp.com",
@@ -398,7 +384,10 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${pid}`).classList.add('active');
             document.getElementById(`btn-${pid}`).classList.add('active');
-            if(pid === 'metrics') procesarMetricasGlobales();
+            if(pid === 'metrics') {
+                if(bitacoraHistorica.length === 0) sincronizarDesdeSheet();
+                else procesarMetricasGlobales();
+            }
         }
 
         // === 3. SINCRONIZACIÓN Y ESTADOS EN VIVO ===
@@ -424,28 +413,24 @@
             else { divCosto.style.display = 'block'; }
         }
 
-        // === 4. LÓGICA DE MÁQUINA DE ESTADOS ===
+        // === 4. LÓGICA CONDICIONAL DE BOTONES Y RUMBOS ===
         function evaluarRumbo(tid, nuevoEstado, color) {
             const estadoActual = activeStates[tid] ? activeStates[tid].estado : 'Inactivo';
 
-            // Bloqueos de seguridad - Si está en CAPJ no puede ir directo a Atención o Espera
             if (estadoActual === 'En dependencia CAPJ' && ['Atención Presencial', 'A la espera en juzgados'].includes(nuevoEstado)) {
                 alert("❌ Debes trasladarte a los Juzgados primero."); return;
             }
             
-            // Advertencia si va a juzgados y desvía al lab o capj
             if (estadoActual === 'Traslado a Juzgados' && ['Traslado a Lab', 'Traslado a CAPJ'].includes(nuevoEstado)) {
                 if (!confirm("⚠️ ¿Estás seguro que quieres cambiar tu rumbo en pleno traslado?")) return;
             }
 
-            // Advertencia de Laboratorio
             if (estadoActual === 'Atención Presencial' && nuevoEstado === 'Traslado a Lab') {
                 if (confirm("💡 ¿Vas al laboratorio a un cambio de equipo? Nosotros anotamos la observación por ti. ¿Deseas hacerlo?")) {
                     document.getElementById(`obs_${tid}`).value = "A laboratorio a buscar / dejar equipo para su instalación";
                 }
             }
 
-            // Si está atendiendo, no puede ir directo a esperar ni a trasladarse a juzgados (ya está ahí)
             if (estadoActual === 'Atención Presencial' && ['Traslado a Juzgados', 'A la espera en juzgados'].includes(nuevoEstado)) {
                 alert("❌ Ya estás en los Juzgados realizando una atención."); return;
             }
@@ -462,7 +447,6 @@
                 sBox.querySelector('span:first-child').innerHTML = `Actividad: <b>${estado}</b>`;
                 document.getElementById(`card_${tid}`).style.borderColor = data.color;
 
-                // --- Habilitación visual Condicional de Botones ---
                 const btnCapj = document.querySelector(`#actions_${tid} [data-estado="En dependencia CAPJ"]`);
                 const btnJuzgados = document.querySelector(`#actions_${tid} [data-estado="Traslado a Juzgados"]`);
                 const btnEspera = document.querySelector(`#actions_${tid} [data-estado="A la espera en juzgados"]`);
@@ -477,7 +461,7 @@
                     btnAtn.disabled = true; btnTCapj.disabled = true; btnEspera.disabled = true; btnCapj.disabled = true;
                     btnCapj.classList.add('active'); [btnJuzgados, btnLab, btnCol].forEach(b => b.classList.add('inactive'));
                 } else if (estado === 'Traslado a Juzgados') {
-                    btnJuzgados.disabled = true; btnCapj.disabled = true;
+                    btnCapj.disabled = true; btnJuzgados.disabled = true;
                     btnJuzgados.classList.add('active'); [btnEspera, btnLab, btnTCapj, btnAtn, btnCol].forEach(b => b.classList.add('inactive'));
                 } else if (estado === 'A la espera en juzgados') {
                     btnCapj.disabled = true; btnJuzgados.disabled = true; btnEspera.disabled = true;
@@ -486,11 +470,11 @@
                     btnCapj.disabled = true; btnJuzgados.disabled = true; btnEspera.disabled = true; btnAtn.disabled = true;
                     btnAtn.classList.add('active'); [btnLab, btnTCapj, btnCol].forEach(b => b.classList.add('inactive'));
                 } else if (estado === 'Traslado a Lab') {
-                    btnLab.disabled = true; btnEspera.disabled = true;
-                    btnLab.classList.add('active'); [btnCapj, btnJuzgados, btnTCapj, btnAtn, btnCol].forEach(b => b.classList.add('inactive'));
+                    btnJuzgados.disabled = true; btnLab.disabled = true; btnEspera.disabled = true;
+                    btnLab.classList.add('active'); [btnCapj, btnTCapj, btnAtn, btnCol].forEach(b => b.classList.add('inactive'));
                 } else if (estado === 'Traslado a CAPJ') {
-                    btnTCapj.disabled = true; btnAtn.disabled = true; btnEspera.disabled = true; btnCapj.disabled = true; btnJuzgados.disabled = true; btnLab.disabled = true;
-                    btnTCapj.classList.add('active'); [btnCol].forEach(b => b.classList.add('inactive'));
+                    btnJuzgados.disabled = true; btnAtn.disabled = true; btnLab.disabled = true; btnEspera.disabled = true; btnTCapj.disabled = true;
+                    btnTCapj.classList.add('active'); [btnCapj, btnCol].forEach(b => b.classList.add('inactive'));
                 } else if (estado === 'Colación') {
                     btnCol.disabled = true;
                     btnCol.classList.add('active'); [btnCapj, btnJuzgados, btnEspera, btnLab, btnTCapj, btnAtn].forEach(b => b.classList.add('inactive'));
@@ -566,7 +550,7 @@
 
         function tomarTicketAsignado(tid, fbKey, tktId, urgencia) {
             if (!activeStates[tid] || !activeStates[tid].estado || ['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(activeStates[tid].estado)) {
-                alert("⚠️ Selecciona un estado en terreno (ej: Traslado a Juzgados o Espera) antes de tomar el ticket."); return;
+                alert("⚠️ Selecciona un estado activo en terreno antes de tomar el ticket."); return;
             }
             let tktsArray = activeStates[tid].tickets ? (Array.isArray(activeStates[tid].tickets) ? activeStates[tid].tickets : Object.values(activeStates[tid].tickets)) : [];
             tktsArray.push({ id: tktId, urgencia: urgencia, cierreOT: "", sinOT: false });
@@ -607,10 +591,9 @@
 
         function agregarTicketManual(tid) {
             const tktId = document.getElementById(`new_tkt_id_${tid}`).value.trim();
-            const urgencia = document.getElementById(`new_tkt_urg_${tid}`).value;
             if (tktId === "" || !activeStates[tid]) return;
             let tktsArray = activeStates[tid].tickets ? (Array.isArray(activeStates[tid].tickets) ? activeStates[tid].tickets : Object.values(activeStates[tid].tickets)) : [];
-            tktsArray.push({ id: tktId, urgencia: urgencia, cierreOT: "", sinOT: false });
+            tktsArray.push({ id: tktId, urgencia: "Media", cierreOT: "", sinOT: false });
             activeStates[tid].tickets = tktsArray;
             document.getElementById(`new_tkt_id_${tid}`).value = "";
             database.ref('activeStates/' + tid).set(activeStates[tid]);
@@ -633,11 +616,10 @@
             if (!tickets) return;
             let tktsArray = Array.isArray(tickets) ? tickets : Object.values(tickets);
             tktsArray.forEach((t, idx) => {
-                const item = document.createElement('div'); item.className = `ticket-item ${t.urgencia.toLowerCase()}`;
-                // Admin YA PUEDE EDITAR Y BORRAR sin restricción
+                const item = document.createElement('div'); item.className = `ticket-item`;
                 item.innerHTML = `
                     <button class="remove-tkt-btn" onclick="modificarTicket('${tid}', ${idx}, 'borrar')">X</button>
-                    <strong>🎫 ${t.id}</strong> [${t.urgencia}]
+                    <strong>🎫 ${t.id}</strong>
                     <div style="display:flex; gap:5px; align-items:center; margin-top:8px;">
                         <input type="time" value="${t.cierreOT || ''}" onchange="modificarTicket('${tid}', ${idx}, 'cierre', this.value)" style="padding:6px; border-radius:4px; border:1px solid #cbd5e1;" ${t.sinOT ? 'disabled' : ''}>
                         <label style="font-size:12px; font-weight:bold; color:#475569;"><input type="checkbox" onchange="modificarTicket('${tid}', ${idx}, 'sinOT', this.checked)" ${t.sinOT ? 'checked' : ''}> Sin OT</label>
@@ -651,7 +633,7 @@
             let tktsArray = activeStates[tid].tickets ? Object.values(activeStates[tid].tickets) : [];
             
             if (['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ'].includes(estadoActual)) return true;
-            if (['Traslado a Juzgados', 'A la espera en juzgados', 'Traslado a Lab'].includes(estadoActual)) return true; // No exijo tkt aqui
+            if (['Traslado a Juzgados', 'A la espera en juzgados', 'Traslado a Lab'].includes(estadoActual)) return true;
 
             if (estadoActual === 'Atención Presencial') {
                 if (tktsArray.length === 0) { alert("⚠️ Añade al menos un Ticket para validar la Atención."); return false; }
@@ -685,10 +667,10 @@
 
             let tktsArray = data.tickets ? Object.values(data.tickets) : [];
             let tkts = [], urgs = [], cierres = [];
-            tktsArray.forEach(t => { tkts.push(t.id); urgs.push(t.urgencia); cierres.push(t.sinOT ? "Sin OT" : (t.cierreOT || "N/A")); });
+            tktsArray.forEach(t => { tkts.push(t.id); urgs.push(t.urgencia || "Media"); cierres.push(t.sinOT ? "Sin OT" : (t.cierreOT || "N/A")); });
             
             if(['En dependencia CAPJ', 'Colación', 'Traslado a CAPJ', 'A la espera en juzgados'].includes(data.estado) && tkts.length === 0){
-                tkts = ["N/A"]; urgs = ["Baja"]; cierres = ["N/A"];
+                tkts = ["N/A"]; urgs = ["N/A"]; cierres = ["N/A"];
             }
 
             let tipoTrasladoFinal = "N/A"; let montoFinal = "";
@@ -754,9 +736,10 @@
                 card.className = `live-card ${live ? 'active-state' : ''}`;
                 if (live) {
                     let tktsArray = live.tickets ? Object.values(live.tickets) : [];
-                    const tkts = tktsArray.map(k => `${k.id} (${k.urgencia})`).join(", ") || "Ninguno";
+                    const tkts = tktsArray.map(k => `${k.id}`).join(", ") || "Ninguno";
                     let transInfo = live.tipoTraslado || 'A pie';
                     if(transInfo !== 'A pie' && live.montoTraslado) transInfo += ` | 💲 $${live.montoTraslado}`;
+
                     card.innerHTML = `<strong>👤 ${t.nombre}</strong><br>🟢 Estado: <b style="color:${live.color};">${live.estado}</b><br>🚗 Mov: ${transInfo}<br>🎫 Tkts: <i>${tkts}</i>`;
                 } else {
                     card.innerHTML = `<strong>👤 ${t.nombre}</strong><br>💤 Desconectado / Inactivo`;
@@ -765,7 +748,7 @@
             });
         }
 
-        // === 7. MÉTRICAS AVANZADAS CON RANGO DE FECHAS ===
+        // === 7. MÉTRICAS AVANZADAS ADM (CONECTADAS A SHEET) ===
         function tiempoAMinutos(tStr) {
             if(!tStr) return 0; const p = tStr.split(':');
             return p.length === 3 ? parseInt(p[0])*60 + parseInt(p[1]) + parseInt(p[2])/60 : 0;
@@ -777,8 +760,26 @@
                 const [y, m, d] = dateStr.split('-'); return new Date(y, m - 1, d);
             }
             let p = dateStr.split(/[-/]/);
-            if (p.length === 3) { return new Date(p[2], p[1] - 1, p[0]); }
+            if (p.length === 3) {
+                if(p[0].length === 4) return new Date(p[0], p[1]-1, p[2]);
+                return new Date(p[2], p[1] - 1, p[0]);
+            }
             return null;
+        }
+
+        async function sincronizarDesdeSheet() {
+            const btnLoad = document.getElementById('btn-sync-sheet');
+            btnLoad.innerText = "⏳ Sincronizando Nube...";
+            try {
+                const res = await fetch(GOOGLE_SHEET_URL);
+                const data = await res.json();
+                if(data && data.length > 0) {
+                    bitacoraHistorica = data;
+                    localStorage.setItem('bitacoraHistorica', JSON.stringify(bitacoraHistorica));
+                }
+            } catch (error) { console.error("Error leyendo Sheet: ", error); }
+            btnLoad.innerText = "🔄 Cargar Data Excel";
+            procesarMetricasGlobales();
         }
 
         function procesarMetricasGlobales() {
@@ -812,13 +813,12 @@
 
             dataExportacion.forEach(r => {
                 const min = tiempoAMinutos(r.tiempo);
-                
                 if (r.estado === 'Traslado a Lab') sumLab += min;
                 if (r.estado === 'Traslado a Juzgados') sumCiviles += min;
                 if (r.estado === 'Traslado a CAPJ') sumCapj += min;
                 if (r.estado === 'Atención Presencial') {
                     sumAtn += min; countAtn++;
-                    if(r.ticket && r.ticket !== 'N/A') topRequerimientos.push({ t: r.ticket, m: min });
+                    if(r.ticket && r.ticket !== 'N/A' && r.ticket.trim() !== '') topRequerimientos.push({ t: r.ticket, m: min });
                 }
                 distribucionTiempos[r.estado] = (distribucionTiempos[r.estado] || 0) + min;
 
@@ -864,8 +864,8 @@
 
         function exportarMetricasExcel() {
             if(dataExportacion.length === 0) { alert("No hay datos para exportar."); return; }
-            let csv = "\uFEFFFecha;Turno;Hora Inicio;Hora Fin;Duración;Técnico;Proyecto;Actividad;Tickets;Urgencias;Cierres OT;Transporte;Monto ($);Observaciones\n";
-            dataExportacion.forEach(r => { csv += `"${r.fecha}";"${r.ventana}";"${r.horaInicio}";"${r.horaFin}";"${r.tiempo}";"${r.tecnico}";"${r.proyecto}";"${r.estado}";"${r.ticket}";"${r.urgencia}";"${r.cierreOT}";"${r.tipoTraslado}";"${r.montoTraslado}";"${r.obs}"\n`; });
+            let csv = "\uFEFFFecha;Turno;Hora Inicio;Hora Fin;Duración;Técnico;Proyecto;Actividad;Tickets;Cierres OT;Transporte;Monto ($);Observaciones\n";
+            dataExportacion.forEach(r => { csv += `"${r.fecha}";"${r.ventana}";"${r.horaInicio}";"${r.horaFin}";"${r.tiempo}";"${r.tecnico}";"${r.proyecto}";"${r.estado}";"${r.ticket}";"${r.cierreOT}";"${r.tipoTraslado}";"${r.montoTraslado || ''}";"${r.obs}"\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
             link.download = `Reporte_ADM_Filtrado.csv`;
@@ -885,9 +885,9 @@
                         if (col.length >= 7) {
                             let cl = col.map(c => c.replace(/^"|"$/g, '').trim());
                             bitacoraHistorica.push({
-                                fecha: cl[0], ventana: cl[1] || 'AM', horaInicio: cl[2] || cl[1], horaFin: cl[3] || cl[2], tiempo: cl[4] || cl[3],
-                                tecnico: cl[5] || cl[4], proyecto: cl[6] || cl[5], estado: cl[7] || cl[6], ticket: cl[8] || cl[7],
-                                urgencia: cl[9] || cl[8], cierreOT: cl[10] || cl[9], tipoTraslado: cl[11] || cl[10], montoTraslado: cl[12] || cl[11], obs: cl[13] || cl[12]
+                                fecha: cl[0], horaInicio: cl[1], horaFin: cl[2], tiempo: cl[3], tecnico: cl[4], proyecto: cl[5],
+                                estado: cl[6], ticket: cl[7] || '', cierreOT: cl[8] || 'N/A', obs: cl[9] || '',
+                                tipoTraslado: cl[10] || 'A pie', montoTraslado: cl[11] || '', ventana: cl[12] || 'AM'
                             });
                         }
                     }
@@ -895,8 +895,7 @@
                     if (procesados === archivos.length) {
                         localStorage.setItem('bitacoraHistorica', JSON.stringify(bitacoraHistorica));
                         if(document.getElementById('tab-metrics').classList.contains('active')) procesarMetricasGlobales();
-                        alert("✅ Historial inyectado en memoria. Si no habías filtrado por fecha, los gráficos se actualizarán ahora mismo.");
-                        event.target.value = '';
+                        alert("✅ Historial inyectado en memoria."); event.target.value = '';
                     }
                 };
                 reader.readAsText(file, 'utf-8');
